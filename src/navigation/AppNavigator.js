@@ -6,9 +6,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 
 import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 import MapScreen from '../screens/MapScreen';
+import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
+import { useAuth } from '../context/authContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -36,19 +39,34 @@ const MainTabs = () => {
             })}
         >
             <Tab.Screen name="Keşfet" component={MapScreen} />
-            <Tab.Screen name="Kaydedilenler" component={MapScreen} />
+            <Tab.Screen name="Kaydedilenler" component={SavedScreen} />
             <Tab.Screen name="Profil" component={ProfileScreen} />
         </Tab.Navigator>
     );
 };
 
 const AppNavigator = () => {
+    const { isAuthenticated } = useAuth();
+    
+    // While checking for user session
+    if (typeof isAuthenticated === 'undefined') {
+        return null; // Or a splash screen
+    }
+
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="MainTabs" component={MainTabs} />
-                <Stack.Screen name="PlaceDetail" component={PlaceDetailScreen} />
+                {isAuthenticated ? (
+                    <>
+                        <Stack.Screen name="MainTabs" component={MainTabs} />
+                        <Stack.Screen name="PlaceDetail" component={PlaceDetailScreen} />
+                    </>
+                ) : (
+                    <>
+                        <Stack.Screen name="Login" component={LoginScreen} />
+                        <Stack.Screen name="Register" component={RegisterScreen} />
+                    </>
+                )}
             </Stack.Navigator>
         </NavigationContainer>
     );

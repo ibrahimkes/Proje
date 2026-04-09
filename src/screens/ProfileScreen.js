@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, FlatList, Modal } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
+import { useAuth } from '../context/authContext';
+import { getUserFavorites, getUserComments } from '../services/firebaseService';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { log } from 'firebase/firestore/pipelines';
 
 const AVATARS = [
     'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
@@ -12,71 +16,89 @@ const AVATARS = [
 ];
 
 const ProfileScreen = ({ navigation }) => {
-    const savedPlaces = [
-        { id: '1', title: 'Antakya Sofrası', type: 'Hatay Yöresel', rating: 4.8 },
-        { id: '2', title: 'İmam Çağdaş', type: 'Kebap ve Baklava', rating: 4.9 },
-    ];
+    const { user, logout, updateProfileUrl } = useAuth();
+    const [savedPlaces, setSavedPlaces] = useState([]);
+    const [userComments, setUserComments] = useState([]);
+    const [isAvatarModalVisible, setAvatarModalVisible] = useState(false);
 
-    const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
+    const handleAvatarSelect = async (avatar) => {
+        setAvatarModalVisible(false);
+        await updateProfileUrl(avatar);
+    };
 
-    const handleLogout = () => {
-        navigation.replace('Login');
+    useFocusEffect(
+        useCallback(() => {
+            let isActive = true;
+            const fetchProfileData = async () => {
+                if (user) {
+                    const favs = await getUserFavorites(user.userId);
+                    const comments = await getUserComments(user.userId);
+                    if (isActive) {
+                        setSavedPlaces(favs);
+                        setUserComments(comments);
+                    }
+                }
+            };
+            fetchProfileData();
+            return () => { isActive = false; };
+        }, [user])
+    );
+
+    const handleLogout = async () => {
+        await logout();
     };
 
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <View style={styles.avatarContainer}>
+                <TouchableOpacity style={styles.avatarWrapper} onPress={() => setAvatarModalVisible(true)} activeOpacity={0.8}>
                     <Image
-                        source={{ uri: selectedAvatar }}
+                        source={{ uri: user?.profileUrl || AVATARS[0] }}
                         style={styles.avatar}
                     />
-                </View>
+                    <View style={styles.editBadge}>
+                        <MaterialIcons name="edit" size={16} color={theme.colors.card} />
+                    </View>
+                </TouchableOpacity>
 
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.avatarSelectionContainer} contentContainerStyle={{ paddingHorizontal: 20 }}>
-                    {AVATARS.map((avatar, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={() => setSelectedAvatar(avatar)}
-                            style={[
-                                styles.avatarChoice,
-                                selectedAvatar === avatar && styles.avatarChoiceSelected
-                            ]}
-                        >
-                            <Image source={{ uri: avatar }} style={styles.avatarChoiceImage} />
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
-                <Text style={styles.name}>Ahmet Yılmaz</Text>
-                <Text style={styles.email}>ahmet.y@email.com</Text>
+                <Text style={styles.name}>{user?.username || 'Kullanıcı'}</Text>
+                <Text style={styles.email}>{user?.email || 'email@yok.com'}</Text>
 
                 <View style={styles.statsContainer}>
                     <View style={styles.statBox}>
-                        <Text style={styles.statNumber}>12</Text>
+                        <Text style={styles.statNumber}>{savedPlaces.length || 0}</Text>
                         <Text style={styles.statLabel}>Kaydedilenler</Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statBox}>
+                        <Text style={styles.statNumber}>{userComments.length || 0}</Text>
+                        <Text style={styles.statLabel}>Yorumlar</Text>
                     </View>
                 </View>
             </View>
 
             <View style={styles.content}>
-                <Text style={styles.sectionTitle}>Kaydedilen Mekanlar</Text>
-                <View style={styles.savedList}>
-                    {savedPlaces.map(place => (
-                        <TouchableOpacity key={place.id} style={styles.savedCard}>
-                            <View style={styles.savedIcon}>
-                                <MaterialIcons name="bookmark" size={24} color={theme.colors.primary} />
-                            </View>
-                            <View style={styles.savedInfo}>
-                                <Text style={styles.savedTitle}>{place.title}</Text>
-                                <Text style={styles.savedType}>{place.type}</Text>
-                            </View>
-                            <View style={styles.savedRating}>
-                                <MaterialIcons name="star" size={16} color="#FFD700" />
-                                <Text style={styles.savedRatingText}>{place.rating}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                {userComments.length > 0 && (
+                     <>
+                        <Text style={styles.sectionTitle}>Yorumlarım</Text>
+                        <View style={styles.commentList}>
+                            {userComments.map(comment => (
+                                <View key={comment.id} style={styles.commentCard}>
+                                    <View style={styles.commentHeader}>
+                                         <Text style={styles.commentPlaceTitle}>{comment.placeTitle || 'Mekan'}</Text>
+                                         <View style={styles.commentRating}>
+                                             {[...Array(5)].map((_, i) => (
+                                                 <MaterialIcons key={i} name="star" size={14} color={i < comment.rating ? "#FFD700" : theme.colors.border} />
+                                             ))}
+                                         </View>
+                                    </View>
+                                    <Text style={styles.commentText}>{comment.text}</Text>
+                                    <Text style={styles.commentDate}>{comment.date}</Text>
+                                </View>
+                            ))}
+                        </View>
+                     </>
+                )}
 
                 <Text style={styles.sectionTitle}>Ayarlar</Text>
                 <View style={styles.settingsGroup}>
@@ -101,6 +123,43 @@ const ProfileScreen = ({ navigation }) => {
                     <Text style={styles.logoutText}>Çıkış Yap</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Avatar Select Modal */}
+            <Modal
+                visible={isAvatarModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setAvatarModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <TouchableOpacity style={styles.modalBackdrop} onPress={() => setAvatarModalVisible(false)} />
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Profil Resmi Seç</Text>
+                            <TouchableOpacity onPress={() => setAvatarModalVisible(false)}>
+                                <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.avatarGrid}>
+                            {AVATARS.map((avatar, index) => {
+                                const isSelected = (user?.profileUrl || AVATARS[0]) === avatar;
+                                return (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() => handleAvatarSelect(avatar)}
+                                        style={[
+                                            styles.avatarGridItem,
+                                            isSelected && styles.avatarGridItemSelected
+                                        ]}
+                                    >
+                                        <Image source={{ uri: avatar }} style={styles.avatarGridImage} />
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     );
 };
@@ -123,35 +182,29 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 3,
     },
-    avatarContainer: {
+    avatarWrapper: {
         position: 'relative',
-        marginBottom: 16,
+        marginBottom: 20,
     },
     avatar: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-    },
-    avatarSelectionContainer: {
-        flexDirection: 'row',
-        marginBottom: 16,
-    },
-    avatarChoice: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        marginRight: 10,
-        borderWidth: 2,
-        borderColor: 'transparent',
-    },
-    avatarChoiceSelected: {
+        width: 110,
+        height: 110,
+        borderRadius: 55,
+        borderWidth: 3,
         borderColor: theme.colors.primary,
-        transform: [{ scale: 1.1 }],
     },
-    avatarChoiceImage: {
-        width: '100%',
-        height: '100%',
-        borderRadius: 25,
+    editBadge: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: theme.colors.primary,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: theme.colors.card,
     },
     name: {
         ...theme.typography.h1,
@@ -195,48 +248,39 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 16,
     },
-    savedList: {
+    commentList: {
         marginBottom: 24,
     },
-    savedCard: {
-        flexDirection: 'row',
-        alignItems: 'center',
+    commentCard: {
         backgroundColor: theme.colors.card,
         padding: 16,
         borderRadius: theme.borderRadius.md,
         marginBottom: 12,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
     },
-    savedIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: 'rgba(240, 138, 36, 0.1)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 16,
-    },
-    savedInfo: {
-        flex: 1,
-    },
-    savedTitle: {
-        ...theme.typography.h3,
-        marginBottom: 4,
-    },
-    savedType: {
-        ...theme.typography.caption,
-    },
-    savedRating: {
+    commentHeader: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: theme.colors.background,
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 12,
+        marginBottom: 8,
     },
-    savedRatingText: {
-        ...theme.typography.caption,
+    commentPlaceTitle: {
+        ...theme.typography.body,
         fontWeight: 'bold',
-        marginLeft: 4,
+        color: theme.colors.primary,
+    },
+    commentRating: {
+        flexDirection: 'row',
+    },
+    commentText: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+        marginBottom: 8,
+    },
+    commentDate: {
+        ...theme.typography.caption,
+        color: theme.colors.border,
     },
     settingsGroup: {
         backgroundColor: theme.colors.card,
@@ -279,6 +323,56 @@ const styles = StyleSheet.create({
     logoutText: {
         ...theme.typography.h3,
         color: theme.colors.primary,
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalBackdrop: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalContent: {
+        width: '85%',
+        backgroundColor: theme.colors.background,
+        borderRadius: 24,
+        padding: 24,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 10,
+        elevation: 10,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalTitle: {
+        ...theme.typography.h2,
+    },
+    avatarGrid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 12,
+    },
+    avatarGridItem: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        borderWidth: 3,
+        borderColor: 'transparent',
+    },
+    avatarGridItemSelected: {
+        borderColor: theme.colors.primary,
+    },
+    avatarGridImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 30,
     }
 });
 

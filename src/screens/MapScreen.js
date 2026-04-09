@@ -5,14 +5,38 @@ import * as Location from 'expo-location';
 import AlertWrapper from '../components/AlertWrapper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
-import { ANTEP_CENTER_COORDINATE, MOCK_MARKERS, CATEGORIES } from '../constants/mockData';
+import { ANTEP_CENTER_COORDINATE, CATEGORIES } from '../constants/mockData';
+import { getPlaces } from '../services/firebaseService';
 
-const MapScreen = ({ navigation }) => {
+const MapScreen = ({ route, navigation }) => {
     const mapRef = useRef(null);
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [selectedPlace, setSelectedPlace] = useState(null);
     const [userLocation, setUserLocation] = useState(null);
+    const [markers, setMarkers] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            const fetchedPlaces = await getPlaces();
+            setMarkers(fetchedPlaces);
+        })();
+    }, []);
+
+    useEffect(() => {
+        if (route.params?.focusedPlace) {
+            const place = route.params.focusedPlace;
+            setSelectedPlace(place);
+            setIsAlertVisible(true);
+            mapRef.current?.animateToRegion({
+                ...place.coordinate,
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.05,
+            }, 1000);
+            
+            navigation.setParams({ focusedPlace: null });
+        }
+    }, [route.params?.focusedPlace]);
 
     useEffect(() => {
         (async () => {
@@ -72,8 +96,8 @@ const MapScreen = ({ navigation }) => {
     };
 
     const filteredMarkers = selectedCategory === 'all'
-        ? MOCK_MARKERS
-        : MOCK_MARKERS.filter(m => m.categories.map(c => c.toLowerCase()).includes(selectedCategory));
+        ? markers
+        : markers.filter(m => m.categories.map(c => c.toLowerCase()).includes(selectedCategory));
 
     return (
         <View style={styles.container}>

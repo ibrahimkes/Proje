@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Alert } from 'react-native';
 import { theme } from '../constants/theme';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useAuth } from '../context/authContext';
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleLogin = () => {
-        // Navigate to MainTabs without auth logic
-        navigation.replace('MainTabs');
+    const { login } = useAuth();
+
+    const handleLogin = async () => {
+        if (!email || !password) {
+            Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
+            return;
+        }
+        const response = await login(email, password);
+        if (!response.success) {
+            Alert.alert('Giriş Hatası', response.msg);
+        }
+        // Authentication check in AppNavigator will unmount this screen if successful
     };
 
     return (
@@ -65,7 +75,7 @@ const LoginScreen = ({ navigation }) => {
 
                 <View style={styles.registerContainer}>
                     <Text style={styles.registerText}>Hesabın yok mu? </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                         <Text style={styles.registerTextBold}>Kayıt Ol</Text>
                     </TouchableOpacity>
                 </View>
