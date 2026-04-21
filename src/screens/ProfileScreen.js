@@ -4,8 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 import { useAuth } from '../context/authContext';
 import { getUserFavorites, getUserComments } from '../services/firebaseService';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { log } from 'firebase/firestore/pipelines';
+import { useFocusEffect } from '@react-navigation/native';
 
 const AVATARS = [
     'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
@@ -79,25 +78,25 @@ const ProfileScreen = ({ navigation }) => {
 
             <View style={styles.content}>
                 {userComments.length > 0 && (
-                     <>
+                    <>
                         <Text style={styles.sectionTitle}>Yorumlarım</Text>
                         <View style={styles.commentList}>
                             {userComments.map(comment => (
                                 <View key={comment.id} style={styles.commentCard}>
                                     <View style={styles.commentHeader}>
-                                         <Text style={styles.commentPlaceTitle}>{comment.placeTitle || 'Mekan'}</Text>
-                                         <View style={styles.commentRating}>
-                                             {[...Array(5)].map((_, i) => (
-                                                 <MaterialIcons key={i} name="star" size={14} color={i < comment.rating ? "#FFD700" : theme.colors.border} />
-                                             ))}
-                                         </View>
+                                        <Text style={styles.commentPlaceTitle}>{comment.placeTitle || 'Mekan'}</Text>
+                                        <View style={styles.commentRating}>
+                                            {[...Array(5)].map((_, i) => (
+                                                <MaterialIcons key={i} name="star" size={14} color={i < comment.rating ? "#FFD700" : theme.colors.border} />
+                                            ))}
+                                        </View>
                                     </View>
                                     <Text style={styles.commentText}>{comment.text}</Text>
                                     <Text style={styles.commentDate}>{comment.date}</Text>
                                 </View>
                             ))}
                         </View>
-                     </>
+                    </>
                 )}
 
                 <Text style={styles.sectionTitle}>Ayarlar</Text>
@@ -124,7 +123,6 @@ const ProfileScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {/* Avatar Select Modal */}
             <Modal
                 visible={isAvatarModalVisible}
                 transparent={true}

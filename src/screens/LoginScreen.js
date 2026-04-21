@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Alert } from 'react-native';
 import { theme } from '../constants/theme';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -20,7 +20,6 @@ const LoginScreen = ({ navigation }) => {
         if (!response.success) {
             Alert.alert('Giriş Hatası', response.msg);
         }
-        // Authentication check in AppNavigator will unmount this screen if successful
     };
 
     return (

@@ -30,7 +30,6 @@ const SavedScreen = ({ navigation }) => {
     );
 
     const handlePlacePress = (place) => {
-        // Navigate to MapScreen and focus on this place
         navigation.navigate('Keşfet', { focusedPlace: place });
     };
 
@@ -43,12 +42,12 @@ const SavedScreen = ({ navigation }) => {
     }
 
     if (savedPlaces.length === 0) {
-         return (
-             <View style={styles.centerContainer}>
-                 <MaterialIcons name="bookmark-border" size={64} color={theme.colors.textSecondary} />
-                 <Text style={styles.emptyText}>Henüz kaydedilmiş bir mekan yok.</Text>
-             </View>
-         )
+        return (
+            <View style={styles.centerContainer}>
+                <MaterialIcons name="bookmark-border" size={64} color={theme.colors.textSecondary} />
+                <Text style={styles.emptyText}>Henüz kaydedilmiş bir mekan yok.</Text>
+            </View>
+        )
     }
 
     return (

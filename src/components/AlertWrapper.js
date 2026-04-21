@@ -1,22 +1,17 @@
-import { FC, ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     Animated,
     Dimensions,
     Keyboard,
     PanResponder,
     Platform,
-    StyleProp,
     StyleSheet,
     TouchableWithoutFeedback,
     View,
-    ViewStyle,
 } from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { theme as colors } from "../constants/theme";
-
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const AlertWrapper = ({ children, containerStyle, isShow, close, onFocus }) => {

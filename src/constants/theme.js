@@ -1,6 +1,6 @@
 export const theme = {
     colors: {
-        primary: '#F08A24', // Orange used in buttons and highlights
+        primary: '#F08A24',
         background: '#F8F9FA',
         card: '#FFFFFF',
         text: '#222222',

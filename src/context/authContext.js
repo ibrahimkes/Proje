@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../../firebaseConfig';
-import { 
-  getAuth,
-  initializeAuth,
-  getReactNativePersistence,
-  onAuthStateChanged, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut 
+import {
+    getAuth,
+    initializeAuth,
+    getReactNativePersistence,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -23,7 +23,7 @@ export const useAuth = () => {
 
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(undefined); // undefined means loading
+    const [isAuthenticated, setIsAuthenticated] = useState(undefined);
 
     useEffect(() => {
         const unsub = onAuthStateChanged(auth, (user) => {
@@ -77,7 +77,7 @@ export const AuthContextProvider = ({ children }) => {
             await setDoc(doc(db, "users", uid), { profileUrl: url }, { merge: true });
             setUser(prev => ({ ...prev, profileUrl: url }));
             return true;
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             return false;
         }
@@ -86,7 +86,6 @@ export const AuthContextProvider = ({ children }) => {
     const register = async (email, password, username, profileUrl) => {
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password);
-            // Create user document in firestore
             await setDoc(doc(db, "users", response.user.uid), {
                 username,
                 profileUrl: profileUrl || 'https://cvhrma.org/wp-content/uploads/2015/07/default-profile-photo.jpg',

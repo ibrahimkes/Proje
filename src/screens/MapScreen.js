@@ -1,5 +1,5 @@
 import React, { useRef, useState, useMemo, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image, Alert, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import AlertWrapper from '../components/AlertWrapper';
@@ -33,34 +33,44 @@ const MapScreen = ({ route, navigation }) => {
                 latitudeDelta: 0.05,
                 longitudeDelta: 0.05,
             }, 1000);
-            
+
             navigation.setParams({ focusedPlace: null });
         }
     }, [route.params?.focusedPlace]);
 
+    const checkAndRequestLocation = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert(
+                'Konum İzni Gerekli',
+                'Uygulamanın düzgün çalışabilmesi için konum erişimine ihtiyacı var. Lütfen cihaz ayarlarınızdan izin verin.',
+                [
+                    { text: 'İptal', style: 'cancel' },
+                    { text: 'Ayarlara Git', onPress: () => Linking.openSettings() }
+                ]
+            );
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setUserLocation(location.coords);
+
+        Location.watchPositionAsync({
+            accuracy: Location.Accuracy.High,
+            timeInterval: 5000,
+            distanceInterval: 10,
+        }, (loc) => {
+            setUserLocation(loc.coords);
+        });
+    };
+
     useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                console.log('Permission to access location was denied');
-                return;
-            }
+        checkAndRequestLocation();
+    }, []);
 
-            let location = await Location.getCurrentPositionAsync({});
-            setUserLocation(location.coords);
-
-            Location.watchPositionAsync({
-                accuracy: Location.Accuracy.High,
-                timeInterval: 5000,
-                distanceInterval: 10,
-            }, (loc) => {
-                setUserLocation(loc.coords);
-            });
-        })();
-    }, []); const handleMarkerPress = (place) => {
+    const handleMarkerPress = (place) => {
         setSelectedPlace(place);
         setIsAlertVisible(true);
-        // Animate map to marker
         mapRef.current?.animateToRegion({
             ...place.coordinate,
             latitudeDelta: 0.05,
@@ -70,30 +80,8 @@ const MapScreen = ({ route, navigation }) => {
     console.log(selectedPlace);
     const closeAlert = useCallback(() => {
         setIsAlertVisible(false);
-        setTimeout(() => setSelectedPlace(null), 300); // Wait for close animation
+        setTimeout(() => setSelectedPlace(null), 300);
     }, []);
-
-    const renderCategory = ({ item }) => {
-        const isSelected = selectedCategory === item.id;
-        return (
-            <TouchableOpacity
-                style={[styles.categoryPill, isSelected && styles.categoryPillSelected]}
-                onPress={() => setSelectedCategory(item.id)}
-            >
-                {item.icon && (
-                    <MaterialIcons
-                        name={item.icon}
-                        size={16}
-                        color={isSelected ? theme.colors.card : theme.colors.text}
-                        style={{ marginRight: 6 }}
-                    />
-                )}
-                <Text style={[styles.categoryText, isSelected && styles.categoryTextSelected]}>
-                    {item.title}
-                </Text>
-            </TouchableOpacity>
-        );
-    };
 
     const filteredMarkers = selectedCategory === 'all'
         ? markers
@@ -113,7 +101,6 @@ const MapScreen = ({ route, navigation }) => {
                 showsMyLocationButton={false}
             >
 
-                {/* Place Markers */}
                 {filteredMarkers.map(marker => (
                     <Marker
                         key={marker.id}
@@ -131,9 +118,6 @@ const MapScreen = ({ route, navigation }) => {
                 ))}
             </MapView>
 
-
-
-            {/* Floating Action Buttons */}
             <View style={styles.fabContainer}>
                 <TouchableOpacity style={styles.fab} onPress={() => {
                     if (userLocation) {
@@ -144,6 +128,7 @@ const MapScreen = ({ route, navigation }) => {
                             longitudeDelta: 0.0421,
                         }, 1000);
                     } else {
+                        checkAndRequestLocation();
                         mapRef.current?.animateToRegion({
                             ...ANTEP_CENTER_COORDINATE,
                             latitudeDelta: 0.0922,
@@ -155,7 +140,6 @@ const MapScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
             </View>
 
-            {/* Custom Alert Wrapper for Place Details */}
             <AlertWrapper
                 isShow={isAlertVisible}
                 close={closeAlert}
@@ -300,7 +284,7 @@ const styles = StyleSheet.create({
     fabContainer: {
         position: 'absolute',
         right: 16,
-        bottom: 30, // Adjust to stay above bottom tabs/sheet
+        bottom: 30,
     },
     fab: {
         width: 48,

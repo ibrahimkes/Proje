@@ -54,7 +54,6 @@ const PlaceDetailScreen = ({ route, navigation }) => {
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {/* Cover Image & Header */}
                 <View style={styles.imageContainer}>
                     <Image source={{ uri: place.image }} style={styles.coverImage} />
                     <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
@@ -66,7 +65,6 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                     </View>
                 </View>
 
-                {/* Info Card */}
                 <View style={styles.infoSection}>
                     <View style={styles.titleRow}>
                         <Text style={styles.title}>{place.title}</Text>
@@ -105,7 +103,6 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                     )}
                 </View>
 
-                {/* Comments Section */}
                 <View style={styles.commentsSection}>
                     <Text style={styles.sectionTitle}>Yorumlar ({comments.length})</Text>
 
@@ -148,7 +145,6 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                 </View>
             )}
 
-            {/* Comment Drawer Modal */}
             <Modal
                 visible={isCommenting}
                 transparent={true}
