@@ -5,6 +5,7 @@ import { theme } from '../constants/theme';
 import { useAuth } from '../context/authContext';
 import { getUserFavorites, getUserComments } from '../services/firebaseService';
 import { useFocusEffect } from '@react-navigation/native';
+import { useLoading } from '../context/loadingContext';
 
 const AVATARS = [
     'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
@@ -19,6 +20,7 @@ const ProfileScreen = ({ navigation }) => {
     const [savedPlaces, setSavedPlaces] = useState([]);
     const [userComments, setUserComments] = useState([]);
     const [isAvatarModalVisible, setAvatarModalVisible] = useState(false);
+    const { setIsLoading } = useLoading();
 
     const handleAvatarSelect = async (avatar) => {
         setAvatarModalVisible(false);
@@ -30,8 +32,10 @@ const ProfileScreen = ({ navigation }) => {
             let isActive = true;
             const fetchProfileData = async () => {
                 if (user) {
+                    setIsLoading(true);
                     const favs = await getUserFavorites(user.userId);
                     const comments = await getUserComments(user.userId);
+                    setIsLoading(false);
                     if (isActive) {
                         setSavedPlaces(favs);
                         setUserComments(comments);

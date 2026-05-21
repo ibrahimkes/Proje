@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 import { useAuth } from '../context/authContext';
 import { getPlaceComments, addCommentToPlace, isPlaceFavorited, toggleFavorite } from '../services/firebaseService';
+import { useLoading } from '../context/loadingContext';
 
 const PlaceDetailScreen = ({ route, navigation }) => {
     const { place } = route.params || {};
@@ -13,24 +14,28 @@ const PlaceDetailScreen = ({ route, navigation }) => {
     const [isCommenting, setIsCommenting] = useState(false);
     const [comments, setComments] = useState([]);
     const [isFav, setIsFav] = useState(false);
+    const { setIsLoading } = useLoading();
 
     const { user } = useAuth();
 
     useEffect(() => {
         if (!place) return;
         (async () => {
+            setIsLoading(true);
             const fetchedComments = await getPlaceComments(place.id);
             setComments(fetchedComments);
             if (user) {
                 const favStatus = await isPlaceFavorited(user.userId, place.id);
                 setIsFav(favStatus);
             }
+            setIsLoading(false);
         })();
     }, [place, user]);
 
     const handleSendComment = async () => {
         if (!newComment.trim() || !user) return;
         Keyboard.dismiss();
+        setIsLoading(true);
         const response = await addCommentToPlace(place.id, user.userId, user.username, newRating, newComment.trim());
         if (response.success) {
             setComments([...comments, { id: response.id, text: newComment.trim(), user: user.username, rating: newRating, date: 'Şimdi' }]);
@@ -38,12 +43,15 @@ const PlaceDetailScreen = ({ route, navigation }) => {
             setNewRating(5);
             setIsCommenting(false);
         }
+        setIsLoading(false);
     };
 
     const handleToggleFav = async () => {
         if (!user) return;
+        setIsLoading(true);
         const newStatus = await toggleFavorite(user.userId, place.id, isFav);
         setIsFav(newStatus);
+        setIsLoading(false);
     };
 
     if (!place) return null;

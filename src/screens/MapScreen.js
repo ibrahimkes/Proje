@@ -1,12 +1,14 @@
 import React, { useRef, useState, useMemo, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image, Alert, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Linking } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import AlertWrapper from '../components/AlertWrapper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
-import { ANTEP_CENTER_COORDINATE, CATEGORIES } from '../constants/mockData';
-import { getPlaces } from '../services/firebaseService';
+import { ANTEP_CENTER_COORDINATE, MOCK_MARKERS } from '../constants/mockData';
+import { useLoading } from '../context/loadingContext';
+import Constants from 'expo-constants';
 
 const MapScreen = ({ route, navigation }) => {
     const mapRef = useRef(null);
@@ -15,13 +17,18 @@ const MapScreen = ({ route, navigation }) => {
     const [selectedPlace, setSelectedPlace] = useState(null);
     const [userLocation, setUserLocation] = useState(null);
     const [markers, setMarkers] = useState([]);
+    const [locationPermission, setLocationPermission] = useState(null);
+    const [routeDestination, setRouteDestination] = useState(null);
+    const { setIsLoading } = useLoading();
+    const GOOGLE_MAPS_API_KEY = Constants.expoConfig?.extra?.googleMapsApiKey;
 
     useEffect(() => {
-        (async () => {
-            const fetchedPlaces = await getPlaces();
-            setMarkers(fetchedPlaces);
-        })();
-    }, []);
+        if (locationPermission === 'granted') {
+            setIsLoading(true);
+            setMarkers(MOCK_MARKERS);
+            setIsLoading(false);
+        }
+    }, [locationPermission]);
 
     useEffect(() => {
         if (route.params?.focusedPlace) {
@@ -39,29 +46,28 @@ const MapScreen = ({ route, navigation }) => {
     }, [route.params?.focusedPlace]);
 
     const checkAndRequestLocation = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            Alert.alert(
-                'Konum İzni Gerekli',
-                'Uygulamanın düzgün çalışabilmesi için konum erişimine ihtiyacı var. Lütfen cihaz ayarlarınızdan izin verin.',
-                [
-                    { text: 'İptal', style: 'cancel' },
-                    { text: 'Ayarlara Git', onPress: () => Linking.openSettings() }
-                ]
-            );
-            return;
+        try {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            setLocationPermission(status);
+
+            if (status !== 'granted') {
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setUserLocation(location.coords);
+
+            Location.watchPositionAsync({
+                accuracy: Location.Accuracy.High,
+                timeInterval: 5000,
+                distanceInterval: 10,
+            }, (loc) => {
+                setUserLocation(loc.coords);
+            });
+        } catch (error) {
+            console.log("Konum hatası: ", error);
+            setLocationPermission('denied');
         }
-
-        let location = await Location.getCurrentPositionAsync({});
-        setUserLocation(location.coords);
-
-        Location.watchPositionAsync({
-            accuracy: Location.Accuracy.High,
-            timeInterval: 5000,
-            distanceInterval: 10,
-        }, (loc) => {
-            setUserLocation(loc.coords);
-        });
     };
 
     useEffect(() => {
@@ -78,14 +84,54 @@ const MapScreen = ({ route, navigation }) => {
         }, 1000);
     };
     console.log(selectedPlace);
+
     const closeAlert = useCallback(() => {
         setIsAlertVisible(false);
         setTimeout(() => setSelectedPlace(null), 300);
     }, []);
 
+    const startRoute = () => {
+        if (!selectedPlace) return;
+        setRouteDestination(selectedPlace.coordinate);
+        closeAlert();
+    };
+
+    const getMarkerIcon = (categories) => {
+        if (!categories) return "place";
+        const catString = categories.join(' ').toLowerCase();
+
+        if (catString.includes('kebap') || catString.includes('yemek') || catString.includes('meze') || catString.includes('baklava')) {
+            return "restaurant";
+        } else if (catString.includes('müze') || catString.includes('tarihi') || catString.includes('kale')) {
+            return "museum";
+        } else if (catString.includes('park') || catString.includes('doğa') || catString.includes('bahçe')) {
+            return "park";
+        } else if (catString.includes('kahve') || catString.includes('cafe')) {
+            return "local-cafe";
+        }
+
+        return "place";
+    };
+
     const filteredMarkers = selectedCategory === 'all'
         ? markers
         : markers.filter(m => m.categories.map(c => c.toLowerCase()).includes(selectedCategory));
+
+    if (locationPermission === 'denied') {
+        return (
+            <View style={styles.permissionContainer}>
+                <MaterialIcons name="location-off" size={64} color={theme.colors.primary} />
+                <Text style={styles.permissionTitle}>Konum İzni Gerekli</Text>
+                <Text style={styles.permissionText}>Haritayı ve mekanları görebilmek için konum erişimine izin vermeniz gerekmektedir.</Text>
+                <TouchableOpacity style={styles.permissionButton} onPress={() => Linking.openSettings()}>
+                    <Text style={styles.permissionButtonText}>Ayarlara Git</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.permissionRetryButton} onPress={checkAndRequestLocation}>
+                    <Text style={styles.permissionRetryText}>Tekrar Dene</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -97,7 +143,7 @@ const MapScreen = ({ route, navigation }) => {
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-                showsUserLocation={true}
+                showsUserLocation={locationPermission === 'granted'}
                 showsMyLocationButton={false}
             >
 
@@ -109,14 +155,44 @@ const MapScreen = ({ route, navigation }) => {
                     >
                         <View style={[styles.customMarker, selectedPlace?.id === marker.id && styles.customMarkerSelected]}>
                             <MaterialIcons
-                                name="restaurant"
+                                name={getMarkerIcon(marker.categories)}
                                 size={20}
                                 color={selectedPlace?.id === marker.id ? theme.colors.card : theme.colors.primary}
                             />
                         </View>
                     </Marker>
                 ))}
+
+                {routeDestination && userLocation && (
+                    <MapViewDirections
+                        origin={userLocation}
+                        destination={routeDestination}
+                        apikey={GOOGLE_MAPS_API_KEY}
+                        strokeWidth={5}
+                        strokeColor={theme.colors.primary}
+                        language="tr"
+                        onReady={(result) => {
+                            mapRef.current?.fitToCoordinates(result.coordinates, {
+                                edgePadding: {
+                                    right: 50,
+                                    bottom: 50,
+                                    left: 50,
+                                    top: 100,
+                                },
+                            });
+                        }}
+                    />
+                )}
             </MapView>
+
+            {routeDestination && (
+                <View style={styles.cancelRouteContainer}>
+                    <TouchableOpacity style={styles.cancelRouteButton} onPress={() => setRouteDestination(null)}>
+                        <MaterialIcons name="close" size={24} color={theme.colors.card} style={{ marginRight: 8 }} />
+                        <Text style={styles.cancelRouteText}>Rotayı İptal Et</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
 
             <View style={styles.fabContainer}>
                 <TouchableOpacity style={styles.fab} onPress={() => {
@@ -167,12 +243,17 @@ const MapScreen = ({ route, navigation }) => {
                         </TouchableOpacity>
 
                         <View style={styles.actionRow}>
+                            <TouchableOpacity style={styles.secondaryButton} onPress={startRoute}>
+                                <MaterialIcons name="directions" size={20} color={theme.colors.primary} style={{ marginRight: 4 }} />
+                                <Text style={styles.secondaryButtonText}>Yol Tarifi</Text>
+                            </TouchableOpacity>
+
                             <TouchableOpacity style={styles.primaryButton} onPress={() => {
                                 closeAlert();
                                 navigation.navigate('PlaceDetail', { place: selectedPlace });
                             }}>
-                                <MaterialIcons name="directions" size={20} color={theme.colors.card} style={{ marginRight: 8 }} />
-                                <Text style={styles.primaryButtonText}>Detay ve Yorumlar</Text>
+                                <MaterialIcons name="info-outline" size={20} color={theme.colors.card} style={{ marginRight: 4 }} />
+                                <Text style={styles.primaryButtonText}>Detaylar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -183,6 +264,47 @@ const MapScreen = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    permissionContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.colors.background,
+        padding: 24,
+    },
+    permissionTitle: {
+        ...theme.typography.h2,
+        marginTop: 16,
+        marginBottom: 8,
+        color: theme.colors.text,
+        textAlign: 'center',
+    },
+    permissionText: {
+        ...theme.typography.body,
+        color: theme.colors.textSecondary,
+        textAlign: 'center',
+        marginBottom: 32,
+    },
+    permissionButton: {
+        backgroundColor: theme.colors.primary,
+        paddingHorizontal: 32,
+        paddingVertical: 14,
+        borderRadius: theme.borderRadius.md,
+        width: '100%',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    permissionButtonText: {
+        ...theme.typography.h3,
+        color: theme.colors.card,
+    },
+    permissionRetryButton: {
+        paddingVertical: 12,
+    },
+    permissionRetryText: {
+        ...theme.typography.body,
+        color: theme.colors.primary,
+        fontWeight: 'bold',
+    },
     container: {
         flex: 1,
     },
@@ -345,21 +467,39 @@ const styles = StyleSheet.create({
     actionRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginTop: 10,
+    },
+    secondaryButton: {
+        flex: 1,
+        flexDirection: 'row',
+        backgroundColor: theme.colors.card,
+        height: 44,
+        borderRadius: theme.borderRadius.md,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 8,
+        borderWidth: 1,
+        borderColor: theme.colors.primary,
+    },
+    secondaryButtonText: {
+        color: theme.colors.primary,
+        fontWeight: 'bold',
+        fontSize: 15,
     },
     primaryButton: {
         flex: 1,
         flexDirection: 'row',
         backgroundColor: theme.colors.primary,
-        height: 48,
+        height: 44,
         borderRadius: theme.borderRadius.md,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 12,
+        marginLeft: 8,
     },
     primaryButtonText: {
         color: theme.colors.card,
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 15,
     },
     iconButton: {
         width: 48,
@@ -370,6 +510,30 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 8,
+    },
+    cancelRouteContainer: {
+        position: 'absolute',
+        top: 60,
+        alignSelf: 'center',
+        zIndex: 100,
+    },
+    cancelRouteButton: {
+        flexDirection: 'row',
+        backgroundColor: theme.colors.text,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        borderRadius: 30,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 6,
+    },
+    cancelRouteText: {
+        color: theme.colors.card,
+        fontWeight: 'bold',
+        fontSize: 15,
     }
 });
 

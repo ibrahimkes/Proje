@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingVi
 import { theme } from '../constants/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/authContext';
+import { log } from 'firebase/firestore/pipelines';
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -12,11 +13,14 @@ const LoginScreen = ({ navigation }) => {
     const { login } = useAuth();
 
     const handleLogin = async () => {
+        console.log("nela")
         if (!email || !password) {
             Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
             return;
         }
+        log("eee")
         const response = await login(email, password);
+        console.log(response)
         if (!response.success) {
             Alert.alert('Giriş Hatası', response.msg);
         }

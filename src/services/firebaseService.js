@@ -14,7 +14,7 @@ export const getPlaces = async () => {
         }
         return placesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch(e) {
-        console.error("Error fetching places", e);
+        console.log("Error fetching places", e);
         return [];
     }
 };
@@ -27,7 +27,7 @@ export const getPlaceDetail = async (placeId) => {
         }
         return null;
     } catch(e) {
-        console.error("Error fetching place details", e);
+        console.log("Error fetching place details", e);
         return null;
     }
 }
@@ -37,7 +37,7 @@ export const getPlaceComments = async (placeId) => {
         const commentsSnap = await getDocs(collection(db, `places/${placeId}/comments`));
         return commentsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch(e) {
-        console.error("Error fetching comments", e);
+        console.log("Error fetching comments", e);
         return [];
     }
 }
@@ -69,7 +69,7 @@ export const addCommentToPlace = async (placeId, userId, userFullName, rating, t
 
          return { success: true, id: newCommentRef.id };
      } catch (e) {
-         console.error("Error adding comment", e);
+         console.log("Error adding comment", e);
          return { success: false, error: e };
      }
 }
@@ -87,7 +87,7 @@ export const getUserComments = async (userId) => {
         }
         return comments;
     } catch(e) {
-         console.error("Error fetching user comments", e);
+         console.log("Error fetching user comments", e);
          return [];
     }
 }
@@ -106,7 +106,7 @@ export const getUserFavorites = async (userId) => {
         }
         return places;
     } catch(e) {
-        console.error("Error fetching favorites", e);
+        console.log("Error fetching favorites", e);
         return [];
     }
 }
@@ -126,7 +126,7 @@ export const toggleFavorite = async (userId, placeId, isCurrentlyFavorited) => {
             return true; // new state
         }
     } catch(e) {
-        console.error("Error toggling favorite", e);
+        console.log("Error toggling favorite", e);
         return isCurrentlyFavorited; // if errors, assume unchanged
     }
 }
@@ -165,6 +165,6 @@ const seedData = async () => {
         await batch.commit();
         console.log("Mock data seeded into Firestore successfully.");
     } catch (e) {
-         console.error("Error seeding data to Firestore", e);
+         console.log("Error seeding data to Firestore", e);
     }
 }

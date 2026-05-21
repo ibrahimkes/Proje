@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "YoreselLezzetler",
-    "slug": "YoreselLezzetler",
+    "name": "Yöresel Mekanlar",
+    "slug": "Yöresel Mekanlar",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/yore-kesfet-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/yore-kesfet-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,12 +17,19 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/yore-kesfet-icon.png"
       },
-      "package": "com.zeynep.yoresellezzetler"
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAz-OUYzpxya6XVWAyriSj8oggCWxEWWzA"
+        }
+      },
+      "package": "com.zeynep.yoresellezzetler",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +41,11 @@
           "locationAlwaysAndWhenInUsePermission": "Konumunuza erişmek için onayınız gerekiyor."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "38cd0cdb-1d7b-4452-ae1e-effe8b3cff27"
+      }
+    }
   }
 }

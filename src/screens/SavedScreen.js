@@ -5,22 +5,23 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 import { useAuth } from '../context/authContext';
 import { getUserFavorites } from '../services/firebaseService';
+import { useLoading } from '../context/loadingContext';
 
 const SavedScreen = ({ navigation }) => {
     const { user } = useAuth();
     const [savedPlaces, setSavedPlaces] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { setIsLoading } = useLoading();
 
     useFocusEffect(
         useCallback(() => {
             let isActive = true;
             const fetchFavorites = async () => {
                 if (user) {
-                    setLoading(true);
+                    setIsLoading(true);
                     const favs = await getUserFavorites(user.userId);
                     if (isActive) {
                         setSavedPlaces(favs);
-                        setLoading(false);
+                        setIsLoading(false);
                     }
                 }
             };
@@ -32,14 +33,6 @@ const SavedScreen = ({ navigation }) => {
     const handlePlacePress = (place) => {
         navigation.navigate('Keşfet', { focusedPlace: place });
     };
-
-    if (loading) {
-        return (
-            <View style={styles.centerContainer}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
-            </View>
-        );
-    }
 
     if (savedPlaces.length === 0) {
         return (
