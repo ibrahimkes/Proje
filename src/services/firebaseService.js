@@ -143,7 +143,7 @@ export const isPlaceFavorited = async (userId, placeId) => {
 
 
 // SEEDER
-const seedData = async () => {
+export const seedData = async () => {
     try {
         const batch = writeBatch(db);
         

@@ -68,7 +68,7 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                         <MaterialIcons name="arrow-back" size={24} color={theme.colors.card} />
                     </TouchableOpacity>
                     <View style={styles.ratingBadge}>
-                        <MaterialIcons name="star" size={16} color="#FFD700" style={{ marginRight: 4 }} />
+                        <MaterialIcons name="star" size={13} color="#FFD700" style={{ marginRight: 4 }} />
                         <Text style={styles.ratingText}>{place.rating}</Text>
                     </View>
                 </View>
@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
     },
     ratingBadge: {
         position: 'absolute',
-        bottom: -15,
-        right: 30,
+        bottom: 10,
+        right: 20,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: theme.colors.card,
-        paddingHorizontal: 12,
         paddingVertical: 6,
+        paddingHorizontal: 10,
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     ratingText: {
-        ...theme.typography.h3,
+        ...theme.typography.h6,
         color: theme.colors.text,
     },
     infoSection: {

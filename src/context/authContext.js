@@ -7,9 +7,11 @@ import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    signOut
+    signOut,
+    updatePassword,
+    deleteUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { log } from 'firebase/firestore/pipelines';
 import { useLoading } from './loadingContext';
 
@@ -98,6 +100,56 @@ export const AuthContextProvider = ({ children }) => {
         }
     };
 
+    const updateUserInfo = async (data) => {
+        if (!user || (!user.uid && !user.userId)) return false;
+        setIsLoading(true);
+        try {
+            const uid = user.uid || user.userId;
+            await setDoc(doc(db, "users", uid), data, { merge: true });
+            setUser(prev => ({ ...prev, ...data }));
+            setIsLoading(false);
+            return { success: true };
+        } catch (e) {
+            console.log(e);
+            setIsLoading(false);
+            return { success: false, msg: e.message };
+        }
+    };
+
+    const changeUserPassword = async (newPassword) => {
+        setIsLoading(true);
+        try {
+            if (auth.currentUser) {
+                await updatePassword(auth.currentUser, newPassword);
+                setIsLoading(false);
+                return { success: true };
+            }
+            throw new Error("Kullanıcı oturumu bulunamadı.");
+        } catch (e) {
+            console.log(e);
+            setIsLoading(false);
+            return { success: false, msg: e.message };
+        }
+    };
+
+    const deleteUserAccount = async () => {
+        setIsLoading(true);
+        try {
+            if (auth.currentUser) {
+                const uid = auth.currentUser.uid;
+                await deleteDoc(doc(db, "users", uid));
+                await deleteUser(auth.currentUser);
+                setIsLoading(false);
+                return { success: true };
+            }
+            throw new Error("Kullanıcı oturumu bulunamadı.");
+        } catch (e) {
+            console.log(e);
+            setIsLoading(false);
+            return { success: false, msg: e.message };
+        }
+    };
+
     const register = async (email, password, username, profileUrl) => {
         setIsLoading(true);
         try {
@@ -127,7 +179,7 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateProfileUrl }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateProfileUrl, updateUserInfo, changeUserPassword, deleteUserAccount }}>
             {children}
         </AuthContext.Provider>
     );

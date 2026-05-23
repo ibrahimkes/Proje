@@ -8,11 +8,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useLoading } from '../context/loadingContext';
 
 const AVATARS = [
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    'https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-    'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80'
+    'https://png.pngtree.com/png-clipart/20231019/original/pngtree-user-profile-avatar-png-image_13369991.png',
+    'https://img.freepik.com/premium-vektor/yuvarlak-icinde-is-kadini-avatar-profil-resmi_18591-50375.jpg',
 ];
 
 const ProfileScreen = ({ navigation }) => {
@@ -105,14 +102,14 @@ const ProfileScreen = ({ navigation }) => {
 
                 <Text style={styles.sectionTitle}>Ayarlar</Text>
                 <View style={styles.settingsGroup}>
-                    <TouchableOpacity style={styles.settingItem}>
+                    <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('AccountSettings')}>
                         <View style={styles.settingIconBox}>
                             <MaterialIcons name="person-outline" size={24} color={theme.colors.text} />
                         </View>
                         <Text style={styles.settingText}>Hesap Bilgileri</Text>
                         <MaterialIcons name="chevron-right" size={24} color={theme.colors.textSecondary} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.settingItem}>
+                    <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('PrivacySettings')}>
                         <View style={styles.settingIconBox}>
                             <MaterialIcons name="privacy-tip" size={24} color={theme.colors.text} />
                         </View>

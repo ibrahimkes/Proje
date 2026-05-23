@@ -11,6 +11,8 @@ import MapScreen from '../screens/MapScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
+import AccountSettingsScreen from '../screens/AccountSettingsScreen';
+import PrivacySettingsScreen from '../screens/PrivacySettingsScreen';
 import { useAuth } from '../context/authContext';
 
 const Stack = createNativeStackNavigator();
@@ -60,6 +62,8 @@ const AppNavigator = () => {
                     <>
                         <Stack.Screen name="MainTabs" component={MainTabs} />
                         <Stack.Screen name="PlaceDetail" component={PlaceDetailScreen} />
+                        <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} />
+                        <Stack.Screen name="PrivacySettings" component={PrivacySettingsScreen} />
                     </>
                 ) : (
                     <>

@@ -35,11 +35,9 @@ const MapScreen = ({ route, navigation }) => {
             const place = route.params.focusedPlace;
             setSelectedPlace(place);
             setIsAlertVisible(true);
-            mapRef.current?.animateToRegion({
-                ...place.coordinate,
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
-            }, 1000);
+            mapRef.current?.animateCamera({
+                center: place.coordinate,
+            }, { duration: 1000 });
 
             navigation.setParams({ focusedPlace: null });
         }
@@ -77,11 +75,9 @@ const MapScreen = ({ route, navigation }) => {
     const handleMarkerPress = (place) => {
         setSelectedPlace(place);
         setIsAlertVisible(true);
-        mapRef.current?.animateToRegion({
-            ...place.coordinate,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-        }, 1000);
+        mapRef.current?.animateCamera({
+            center: place.coordinate,
+        }, { duration: 1000 });
     };
     console.log(selectedPlace);
 
@@ -102,8 +98,10 @@ const MapScreen = ({ route, navigation }) => {
 
         if (catString.includes('kebap') || catString.includes('yemek') || catString.includes('meze') || catString.includes('baklava')) {
             return "restaurant";
-        } else if (catString.includes('müze') || catString.includes('tarihi') || catString.includes('kale')) {
+        } else if (catString.includes('museum') || catString.includes('historical') || catString.includes('müze') || catString.includes('tarihi') || catString.includes('kale')) {
             return "museum";
+        } else if (catString.includes('shopping') || catString.includes('çarşı') || catString.includes('pazar')) {
+            return "storefront";
         } else if (catString.includes('park') || catString.includes('doğa') || catString.includes('bahçe')) {
             return "park";
         } else if (catString.includes('kahve') || catString.includes('cafe')) {
