@@ -9,7 +9,8 @@ import {
     signInWithEmailAndPassword,
     signOut,
     updatePassword,
-    deleteUser
+    deleteUser,
+    sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp, deleteDoc } from 'firebase/firestore';
 import { log } from 'firebase/firestore/pipelines';
@@ -56,14 +57,11 @@ export const AuthContextProvider = ({ children }) => {
     const login = async (email, password) => {
         setIsLoading(true);
         try {
-            console.log("buraya geldi mi")
             const res = await signInWithEmailAndPassword(auth, email, password);
-            console.log(res)
             setIsLoading(false);
             return { success: true };
         } catch (e) {
-            let msg = e.message;
-            console.log("hata : " + e)
+            let msg = e.message || String(e);
             if (msg.includes('auth/invalid-email')) msg = 'Geçersiz e-posta adresi.';
             else if (msg.includes('auth/invalid-credential')) msg = 'Yanlış e-posta veya şifre.';
             else msg = 'Giriş yapılamadı.';
@@ -94,7 +92,6 @@ export const AuthContextProvider = ({ children }) => {
             setIsLoading(false);
             return true;
         } catch (e) {
-            console.log(e);
             setIsLoading(false);
             return false;
         }
@@ -110,7 +107,6 @@ export const AuthContextProvider = ({ children }) => {
             setIsLoading(false);
             return { success: true };
         } catch (e) {
-            console.log(e);
             setIsLoading(false);
             return { success: false, msg: e.message };
         }
@@ -126,7 +122,6 @@ export const AuthContextProvider = ({ children }) => {
             }
             throw new Error("Kullanıcı oturumu bulunamadı.");
         } catch (e) {
-            console.log(e);
             setIsLoading(false);
             return { success: false, msg: e.message };
         }
@@ -144,9 +139,24 @@ export const AuthContextProvider = ({ children }) => {
             }
             throw new Error("Kullanıcı oturumu bulunamadı.");
         } catch (e) {
-            console.log(e);
             setIsLoading(false);
             return { success: false, msg: e.message };
+        }
+    };
+
+    const resetPassword = async (email) => {
+        setIsLoading(true);
+        try {
+            await sendPasswordResetEmail(auth, email);
+            setIsLoading(false);
+            return { success: true };
+        } catch (e) {
+            let msg = e.message || String(e);
+            if (msg.includes('auth/invalid-email')) msg = 'Geçersiz e-posta adresi.';
+            else if (msg.includes('auth/user-not-found')) msg = 'Bu e-posta adresine kayıtlı kullanıcı bulunamadı.';
+            else msg = 'Şifre sıfırlama e-postası gönderilemedi.';
+            setIsLoading(false);
+            return { success: false, msg };
         }
     };
 
@@ -154,7 +164,6 @@ export const AuthContextProvider = ({ children }) => {
         setIsLoading(true);
         try {
             const response = await createUserWithEmailAndPassword(auth, email, password);
-            console.log("buraya geldi mi", response)
             await setDoc(doc(db, "users", response.user.uid), {
                 username,
                 profileUrl: profileUrl || 'https://cvhrma.org/wp-content/uploads/2015/07/default-profile-photo.jpg',
@@ -167,8 +176,7 @@ export const AuthContextProvider = ({ children }) => {
             setIsLoading(false);
             return { success: true, data: response?.user };
         } catch (e) {
-            let msg = e.message;
-            console.log("ne knka cevap", e)
+            let msg = e.message || String(e);
             if (msg.includes('auth/invalid-email')) msg = 'Geçersiz e-posta adresi.';
             else if (msg.includes('auth/email-already-in-use')) msg = 'Bu e-posta adresi zaten kullanımda.';
             else if (msg.includes('auth/weak-password')) msg = 'Şifre çok zayıf (En az 6 karakter olmalı).';
@@ -179,7 +187,7 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateProfileUrl, updateUserInfo, changeUserPassword, deleteUserAccount }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, updateProfileUrl, updateUserInfo, changeUserPassword, deleteUserAccount, resetPassword }}>
             {children}
         </AuthContext.Provider>
     );

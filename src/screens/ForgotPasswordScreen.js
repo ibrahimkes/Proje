@@ -1,28 +1,26 @@
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { theme } from '../constants/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useAuth } from '../context/authContext';
-import { log } from 'firebase/firestore/pipelines';
 
-const LoginScreen = ({ navigation }) => {
+const ForgotPasswordScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const { resetPassword } = useAuth();
 
-    const { login } = useAuth();
-
-    const handleLogin = async () => {
-
-        if (!email || !password) {
-            Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
+    const handleResetPassword = async () => {
+        if (!email) {
+            Alert.alert('Hata', 'Lütfen e-posta adresinizi girin.');
             return;
         }
 
-        const response = await login(email, password);
-
-        if (!response.success) {
-            Alert.alert('Giriş Hatası', response.msg);
+        const response = await resetPassword(email);
+        if (response.success) {
+            Alert.alert('Başarılı', 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol edin.', [
+                { text: 'Tamam', onPress: () => navigation.goBack() }
+            ]);
+        } else {
+            Alert.alert('Hata', response.msg);
         }
     };
 
@@ -33,10 +31,10 @@ const LoginScreen = ({ navigation }) => {
         >
             <View style={styles.headerContainer}>
                 <View style={styles.iconContainer}>
-                    <MaterialIcons name="restaurant" size={60} color={theme.colors.card} />
+                    <MaterialIcons name="lock-reset" size={60} color={theme.colors.card} />
                 </View>
-                <Text style={styles.title}>Yöresel Lezzetleri{'\n'}Keşfet</Text>
-                <Text style={styles.subtitle}>Eşsiz tatlar bir tık uzağında</Text>
+                <Text style={styles.title}>Şifremi Unuttum</Text>
+                <Text style={styles.subtitle}>E-posta adresinizi girerek şifrenizi sıfırlayabilirsiniz</Text>
             </View>
 
             <View style={styles.formContainer}>
@@ -53,33 +51,13 @@ const LoginScreen = ({ navigation }) => {
                     />
                 </View>
 
-                <View style={styles.inputContainer}>
-                    <MaterialIcons name="lock" size={24} color={theme.colors.iconColor} style={styles.inputIcon} />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Şifre"
-                        placeholderTextColor={theme.colors.textSecondary}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry={!showPassword}
-                    />
-                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                        <MaterialIcons name={showPassword ? "visibility" : "visibility-off"} size={24} color={theme.colors.iconColor} />
-                    </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
-                    <Text style={styles.forgotPasswordText}>Şifremi Unuttum</Text>
+                <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword}>
+                    <Text style={styles.resetButtonText}>Bağlantı Gönder</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                    <Text style={styles.loginButtonText}>Giriş Yap</Text>
-                </TouchableOpacity>
-
-                <View style={styles.registerContainer}>
-                    <Text style={styles.registerText}>Hesabın yok mu? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.registerTextBold}>Kayıt Ol</Text>
+                <View style={styles.backContainer}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Text style={styles.backTextBold}>Giriş Ekranına Dön</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -120,6 +98,8 @@ const styles = StyleSheet.create({
         ...theme.typography.body,
         color: 'rgba(255, 255, 255, 0.8)',
         marginTop: 10,
+        textAlign: 'center',
+        paddingHorizontal: 20,
     },
     formContainer: {
         flex: 0.6,
@@ -131,7 +111,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: theme.colors.card,
         borderRadius: theme.borderRadius.md,
-        marginBottom: 20,
+        marginBottom: 30,
         paddingHorizontal: 15,
         height: 60,
         shadowColor: '#000',
@@ -149,19 +129,7 @@ const styles = StyleSheet.create({
         color: theme.colors.text,
         height: '100%',
     },
-    eyeIcon: {
-        padding: 10,
-    },
-    forgotPassword: {
-        alignSelf: 'flex-end',
-        marginBottom: 30,
-    },
-    forgotPasswordText: {
-        ...theme.typography.caption,
-        color: theme.colors.primary,
-        fontWeight: '600',
-    },
-    loginButton: {
+    resetButton: {
         backgroundColor: theme.colors.primary,
         borderRadius: theme.borderRadius.md,
         height: 60,
@@ -173,24 +141,20 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
     },
-    loginButtonText: {
+    resetButtonText: {
         ...theme.typography.h3,
         color: theme.colors.card,
     },
-    registerContainer: {
+    backContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
         marginTop: 30,
     },
-    registerText: {
-        ...theme.typography.body,
-        color: theme.colors.textSecondary,
-    },
-    registerTextBold: {
+    backTextBold: {
         ...theme.typography.body,
         color: theme.colors.primary,
         fontWeight: 'bold',
     },
 });
 
-export default LoginScreen;
+export default ForgotPasswordScreen;

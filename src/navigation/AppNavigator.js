@@ -7,6 +7,7 @@ import { theme } from '../constants/theme';
 
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import MapScreen from '../screens/MapScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -49,10 +50,9 @@ const MainTabs = () => {
 
 const AppNavigator = () => {
     const { isAuthenticated } = useAuth();
-    
-    // While checking for user session
+
     if (typeof isAuthenticated === 'undefined') {
-        return null; // Or a splash screen
+        return null;
     }
 
     return (
@@ -69,6 +69,7 @@ const AppNavigator = () => {
                     <>
                         <Stack.Screen name="Login" component={LoginScreen} />
                         <Stack.Screen name="Register" component={RegisterScreen} />
+                        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                     </>
                 )}
             </Stack.Navigator>

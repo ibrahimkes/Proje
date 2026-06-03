@@ -47,9 +47,9 @@ const ProfileScreen = ({ navigation }) => {
     const handleLogout = async () => {
         await logout();
     };
-
+    console.log(userComments)
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
             <View style={styles.header}>
                 <TouchableOpacity style={styles.avatarWrapper} onPress={() => setAvatarModalVisible(true)} activeOpacity={0.8}>
                     <Image
@@ -81,14 +81,19 @@ const ProfileScreen = ({ navigation }) => {
                 {userComments.length > 0 && (
                     <>
                         <Text style={styles.sectionTitle}>Yorumlarım</Text>
-                        <View style={styles.commentList}>
+                        <ScrollView 
+                            horizontal 
+                            showsHorizontalScrollIndicator={false} 
+                            style={styles.commentList}
+                            contentContainerStyle={{ paddingHorizontal: 20 }}
+                        >
                             {userComments.map(comment => (
                                 <View key={comment.id} style={styles.commentCard}>
                                     <View style={styles.commentHeader}>
-                                        <Text style={styles.commentPlaceTitle}>{comment.placeTitle || 'Mekan'}</Text>
+                                        <Text style={styles.commentPlaceTitle} numberOfLines={2}>{comment.placeTitle || 'Mekan'}</Text>
                                         <View style={styles.commentRating}>
-                                            {[...Array(5)].map((_, i) => (
-                                                <MaterialIcons key={i} name="star" size={14} color={i < comment.rating ? "#FFD700" : theme.colors.border} />
+                                            {[...Array(comment.rating || 0)].map((_, i) => (
+                                                <MaterialIcons key={i} name="star" size={14} color="#FFD700" />
                                             ))}
                                         </View>
                                     </View>
@@ -96,7 +101,7 @@ const ProfileScreen = ({ navigation }) => {
                                     <Text style={styles.commentDate}>{comment.date}</Text>
                                 </View>
                             ))}
-                        </View>
+                        </ScrollView>
                     </>
                 )}
 
@@ -186,6 +191,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     avatar: {
+        marginTop: 40,
         width: 110,
         height: 110,
         borderRadius: 55,
@@ -249,12 +255,14 @@ const styles = StyleSheet.create({
     },
     commentList: {
         marginBottom: 24,
+        marginHorizontal: -20,
     },
     commentCard: {
         backgroundColor: theme.colors.card,
         padding: 16,
         borderRadius: theme.borderRadius.md,
-        marginBottom: 12,
+        marginRight: 16,
+        width: 280,
         borderWidth: 1,
         borderColor: theme.colors.border,
     },
@@ -265,12 +273,15 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     commentPlaceTitle: {
+        flex: 1,
+        marginRight: 10,
         ...theme.typography.body,
         fontWeight: 'bold',
         color: theme.colors.primary,
     },
     commentRating: {
         flexDirection: 'row',
+        flexShrink: 0,
     },
     commentText: {
         ...theme.typography.body,

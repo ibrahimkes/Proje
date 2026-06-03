@@ -79,7 +79,6 @@ const MapScreen = ({ route, navigation }) => {
             center: place.coordinate,
         }, { duration: 1000 });
     };
-    console.log(selectedPlace);
 
     const closeAlert = useCallback(() => {
         setIsAlertVisible(false);
