@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard, Modal } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import AlertWrapper from '../components/AlertWrapper';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
@@ -63,7 +64,7 @@ const PlaceDetailScreen = ({ route, navigation }) => {
     };
 
     if (!place) return null;
-    console.log(currentRating)
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -161,53 +162,44 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                 </View>
             )}
 
-            <Modal
-                visible={isCommenting}
-                transparent={true}
-                animationType="slide"
-                onRequestClose={() => setIsCommenting(false)}
+            <AlertWrapper
+                isShow={isCommenting}
+                close={() => setIsCommenting(false)}
+                containerStyle={styles.modalContent}
             >
-                <KeyboardAvoidingView
-                    style={styles.modalOverlay}
-                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                >
-                    <TouchableOpacity style={styles.modalBackdrop} onPress={() => setIsCommenting(false)} />
-                    <View style={styles.modalContent}>
-                        <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Deneyiminizi Puanlayın</Text>
-                            <TouchableOpacity onPress={() => setIsCommenting(false)}>
-                                <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
-                            </TouchableOpacity>
-                        </View>
+                <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>Deneyiminizi Puanlayın</Text>
+                    <TouchableOpacity onPress={() => setIsCommenting(false)}>
+                        <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                </View>
 
-                        <View style={styles.starSelectorModal}>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <TouchableOpacity key={star} onPress={() => setNewRating(star)} style={{ padding: 4 }}>
-                                    <MaterialIcons name={star <= newRating ? "star" : "star-border"} size={40} color="#FFD700" />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-
-                        <TextInput
-                            style={styles.modalInput}
-                            placeholder="Mekan hakkında ne düşünüyorsunuz?"
-                            placeholderTextColor={theme.colors.textSecondary}
-                            value={newComment}
-                            onChangeText={setNewComment}
-                            multiline
-                            autoFocus
-                        />
-
-                        <TouchableOpacity
-                            style={[styles.modalSubmitButton, !newComment.trim() && { opacity: 0.5 }]}
-                            disabled={!newComment.trim()}
-                            onPress={handleSendComment}
-                        >
-                            <Text style={styles.modalSubmitText}>Gönder</Text>
+                <View style={styles.starSelectorModal}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <TouchableOpacity key={star} onPress={() => setNewRating(star)} style={{ padding: 4 }}>
+                            <MaterialIcons name={star <= newRating ? "star" : "star-border"} size={40} color="#FFD700" />
                         </TouchableOpacity>
-                    </View>
-                </KeyboardAvoidingView>
-            </Modal>
+                    ))}
+                </View>
+
+                <TextInput
+                    style={styles.modalInput}
+                    placeholder="Mekan hakkında ne düşünüyorsunuz?"
+                    placeholderTextColor={theme.colors.textSecondary}
+                    value={newComment}
+                    onChangeText={setNewComment}
+                    multiline
+                    autoFocus
+                />
+
+                <TouchableOpacity
+                    style={[styles.modalSubmitButton, !newComment.trim() && { opacity: 0.5 }]}
+                    disabled={!newComment.trim()}
+                    onPress={handleSendComment}
+                >
+                    <Text style={styles.modalSubmitText}>Gönder</Text>
+                </TouchableOpacity>
+            </AlertWrapper>
         </KeyboardAvoidingView>
     );
 };
@@ -392,14 +384,7 @@ const styles = StyleSheet.create({
         ...theme.typography.h3,
         color: theme.colors.card,
     },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: 'flex-end',
-    },
-    modalBackdrop: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-    },
+
     modalContent: {
         backgroundColor: theme.colors.background,
         borderTopLeftRadius: 24,
