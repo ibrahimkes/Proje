@@ -9,6 +9,7 @@ import { useLoading } from '../context/loadingContext';
 
 const PlaceDetailScreen = ({ route, navigation }) => {
     const { place } = route.params || {};
+    const [currentRating, setCurrentRating] = useState(place?.rating || 0);
     const [newComment, setNewComment] = useState('');
     const [newRating, setNewRating] = useState(5);
     const [isCommenting, setIsCommenting] = useState(false);
@@ -36,9 +37,16 @@ const PlaceDetailScreen = ({ route, navigation }) => {
         if (!newComment.trim() || !user) return;
         Keyboard.dismiss();
         setIsLoading(true);
-        const response = await addCommentToPlace(place.id, user.userId, user.username, newRating, newComment.trim());
+        const uid = user.uid || user.userId;
+        const username = user.username || user.displayName || (user.email ? user.email.split('@')[0] : 'Kullanıcı');
+
+        const response = await addCommentToPlace(place.id, uid, username, newRating, newComment.trim());
+
         if (response.success) {
-            setComments([...comments, { id: response.id, text: newComment.trim(), user: user.username, rating: newRating, date: 'Şimdi' }]);
+            setComments([...comments, { id: response.id, text: newComment.trim(), user: username, rating: newRating, date: 'Şimdi' }]);
+            if (response.newAverage !== undefined) {
+                setCurrentRating(response.newAverage);
+            }
             setNewComment('');
             setNewRating(5);
             setIsCommenting(false);
@@ -55,7 +63,7 @@ const PlaceDetailScreen = ({ route, navigation }) => {
     };
 
     if (!place) return null;
-
+    console.log(currentRating)
     return (
         <KeyboardAvoidingView
             style={styles.container}
@@ -69,7 +77,7 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                     <View style={styles.ratingBadge}>
                         <MaterialIcons name="star" size={13} color="#FFD700" style={{ marginRight: 4 }} />
-                        <Text style={styles.ratingText}>{place.rating}</Text>
+                        <Text style={styles.ratingText}>{currentRating}</Text>
                     </View>
                 </View>
 

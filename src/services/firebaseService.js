@@ -46,6 +46,7 @@ export const addCommentToPlace = async (placeId, userId, userFullName, rating, t
     try {
         const newCommentRef = doc(collection(db, `places/${placeId}/comments`));
         const commentData = {
+            id: newCommentRef.id,
             userId,
             user: userFullName,
             rating,
@@ -67,7 +68,21 @@ export const addCommentToPlace = async (placeId, userId, userFullName, rating, t
             commentCount: increment(1)
         });
 
-        return { success: true, id: newCommentRef.id };
+        // Calculate average rating
+        const commentsSnap = await getDocs(collection(db, `places/${placeId}/comments`));
+        let totalRating = 0;
+        commentsSnap.forEach(doc => {
+            totalRating += (doc.data().rating || 0);
+        });
+        const avg = commentsSnap.size > 0 ? (totalRating / commentsSnap.size) : 0;
+        const newAverage = Number(avg.toFixed(1));
+
+        // Update place document
+        await updateDoc(doc(db, "places", placeId), {
+            rating: newAverage
+        });
+
+        return { success: true, id: newCommentRef.id, newAverage };
     } catch (e) {
         console.log("Error adding comment", e);
         return { success: false, error: e };

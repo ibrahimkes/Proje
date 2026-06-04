@@ -6,7 +6,8 @@ import * as Location from 'expo-location';
 import AlertWrapper from '../components/AlertWrapper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
-import { ANTEP_CENTER_COORDINATE, MOCK_MARKERS } from '../constants/mockData';
+import { ANTEP_CENTER_COORDINATE } from '../constants/mockData';
+import { getPlaces } from '../services/firebaseService';
 import { useLoading } from '../context/loadingContext';
 import Constants from 'expo-constants';
 
@@ -24,9 +25,13 @@ const MapScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         if (locationPermission === 'granted') {
-            setIsLoading(true);
-            setMarkers(MOCK_MARKERS);
-            setIsLoading(false);
+            const loadPlaces = async () => {
+                setIsLoading(true);
+                const places = await getPlaces();
+                setMarkers(places);
+                setIsLoading(false);
+            };
+            loadPlaces();
         }
     }, [locationPermission]);
 

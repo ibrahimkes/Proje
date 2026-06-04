@@ -34,16 +34,14 @@ export const LoadingProvider = ({ children }) => {
         <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
             {children}
             {isLoading && (
-                <Modal transparent={true} animationType="fade" visible={isLoading}>
-                    <View style={styles.overlay}>
-                        <View style={styles.loadingBox}>
-                            <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-                                <MaterialIcons name="restaurant" size={48} color={theme.colors.primary} />
-                            </Animated.View>
-                            <Text style={styles.loadingText}>Lütfen Bekleyin...</Text>
-                        </View>
+                <View style={styles.overlay}>
+                    <View style={styles.loadingBox}>
+                        <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+                            <MaterialIcons name="restaurant" size={48} color={theme.colors.primary} />
+                        </Animated.View>
+                        <Text style={styles.loadingText}>Lütfen Bekleyin...</Text>
                     </View>
-                </Modal>
+                </View>
             )}
         </LoadingContext.Provider>
     );
@@ -53,11 +51,16 @@ export const useLoading = () => useContext(LoadingContext);
 
 const styles = StyleSheet.create({
     overlay: {
-        flex: 1,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 9999,
+        zIndex: 99999,
+        elevation: 9999,
     },
     loadingBox: {
         width: 150,
