@@ -23,7 +23,10 @@ export const auth = initializeAuth(app, {
 });
 
 import { getFirestore, collection } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
+
 export const db = getFirestore(app);
+export const functions = getFunctions(app, "europe-west1"); // same region as python fn
 
 export const usersRef = collection(db, "users");
 export const roomsRef = collection(db, "rooms");

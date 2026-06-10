@@ -1,5 +1,6 @@
-import { db } from '../../firebaseConfig';
-import { collection, doc, getDocs, getDoc, setDoc, updateDoc, increment, deleteDoc, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { db, functions } from '../../firebaseConfig';
+import { collection, doc, getDocs, getDoc, setDoc, updateDoc, increment, deleteDoc, serverTimestamp, writeBatch, query, where } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import { MOCK_MARKERS } from '../constants/mockData';
 
 // PLACES
@@ -19,6 +20,54 @@ export const getPlaces = async () => {
     }
 };
 
+// Haversine formula to calculate distance between two coordinates in km
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+};
+
+export const getNearbyPlaces = async (userLat, userLon, radiusKm = 10) => {
+    try {
+        // Approximate 1 degree of latitude to ~111 km
+        const latDelta = radiusKm / 111;
+        const minLat = userLat - latDelta;
+        const maxLat = userLat + latDelta;
+
+        const placesRef = collection(db, "places");
+        const q = query(
+            placesRef,
+            where("coordinate.latitude", ">=", minLat),
+            where("coordinate.latitude", "<=", maxLat)
+        );
+
+        const placesSnapshot = await getDocs(q);
+        
+        const nearbyPlaces = [];
+        placesSnapshot.forEach(doc => {
+            const data = doc.data();
+            if (data.coordinate && data.coordinate.latitude && data.coordinate.longitude) {
+                const dist = calculateDistance(userLat, userLon, data.coordinate.latitude, data.coordinate.longitude);
+                if (dist <= radiusKm) {
+                    nearbyPlaces.push({ id: doc.id, ...data, distance: dist });
+                }
+            }
+        });
+
+        // Sort by distance (closest first)
+        return nearbyPlaces.sort((a, b) => a.distance - b.distance);
+    } catch (e) {
+        console.log("Error fetching nearby places", e);
+        return [];
+    }
+};
+
 export const getPlaceDetail = async (placeId) => {
     try {
         const docSnap = await getDoc(doc(db, "places", placeId));
@@ -31,6 +80,50 @@ export const getPlaceDetail = async (placeId) => {
         return null;
     }
 }
+
+export const addPlace = async (placeData) => {
+    try {
+        const newPlaceRef = doc(collection(db, "places"));
+        const newPlace = { ...placeData, id: newPlaceRef.id, createdAt: serverTimestamp() };
+        await setDoc(newPlaceRef, newPlace);
+        return { success: true, id: newPlaceRef.id };
+    } catch (e) {
+        console.log("Error adding place", e);
+        return { success: false, error: e };
+    }
+};
+
+export const updatePlace = async (placeId, placeData) => {
+    try {
+        const placeRef = doc(db, "places", placeId);
+        await updateDoc(placeRef, { ...placeData, updatedAt: serverTimestamp() });
+        return { success: true };
+    } catch (e) {
+        console.log("Error updating place", e);
+        return { success: false, error: e };
+    }
+};
+
+export const deletePlace = async (placeId) => {
+    try {
+        // First delete all comments related to this place
+        const commentsSnap = await getDocs(collection(db, `places/${placeId}/comments`));
+        if (!commentsSnap.empty) {
+            const batch = writeBatch(db);
+            commentsSnap.forEach(docSnap => {
+                batch.delete(docSnap.ref);
+            });
+            await batch.commit();
+        }
+        
+        // Delete the place itself
+        await deleteDoc(doc(db, "places", placeId));
+        return { success: true };
+    } catch (e) {
+        console.log("Error deleting place", e);
+        return { success: false, error: e };
+    }
+};
 
 export const getPlaceComments = async (placeId) => {
     try {
@@ -156,6 +249,21 @@ export const isPlaceFavorited = async (userId, placeId) => {
     }
 }
 
+
+// RECOMMENDATIONS (AI ML)
+export const getRecommendedPlaces = async (userId) => {
+    try {
+        const recommendFn = httpsCallable(functions, 'recommend_places');
+        const result = await recommendFn({ userId });
+        if (result.data && result.data.recommendations) {
+            return result.data.recommendations;
+        }
+        return [];
+    } catch (e) {
+        console.log("Error fetching recommendations from ML model:", e);
+        return [];
+    }
+}
 
 // SEEDER
 export const seedData = async () => {

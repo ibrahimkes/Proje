@@ -6,6 +6,8 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import AppNavigator from './src/navigation/AppNavigator';
 import { AuthContextProvider } from './src/context/authContext';
 import { LoadingProvider } from './src/context/loadingContext';
+import { useEffect } from 'react';
+import { seedData } from './src/services/firebaseService';
 
 LogBox.ignoreLogs([
   'FirebaseError: Missing or insufficient permissions',
@@ -14,9 +16,9 @@ LogBox.ignoreLogs([
 ]);
 
 export default function App() {
-  /*   useEffect(() => {
-      seedData();
-    }, []); */
+  /*  useEffect(() => {
+     seedData();
+   }, []); */
 
   return (
     <LoadingProvider>

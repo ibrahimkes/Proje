@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert } from 'react-native';
 import AlertWrapper from '../components/AlertWrapper';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 import { useAuth } from '../context/authContext';
-import { getPlaceComments, addCommentToPlace, isPlaceFavorited, toggleFavorite } from '../services/firebaseService';
+import * as Speech from 'expo-speech';
+import { generatePlaceDescription } from '../services/aiService';
+import { getPlaceComments, addCommentToPlace, isPlaceFavorited, toggleFavorite, updatePlace } from '../services/firebaseService';
 import { useLoading } from '../context/loadingContext';
 
 const PlaceDetailScreen = ({ route, navigation }) => {
@@ -16,9 +18,62 @@ const PlaceDetailScreen = ({ route, navigation }) => {
     const [isCommenting, setIsCommenting] = useState(false);
     const [comments, setComments] = useState([]);
     const [isFav, setIsFav] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [currentAiDescription, setCurrentAiDescription] = useState(place?.ai_description || null);
     const { setIsLoading } = useLoading();
 
     const { user } = useAuth();
+
+    useEffect(() => {
+        return () => {
+            Speech.stop();
+        };
+    }, []);
+
+    const handleSmartGuide = async () => {
+        if (isSpeaking) {
+            Speech.stop();
+            setIsSpeaking(false);
+            return;
+        }
+
+        try {
+            let textToSpeak = currentAiDescription;
+
+            if (!textToSpeak) {
+                setIsGenerating(true);
+                const category = place.categories && place.categories.length > 0 ? place.categories[0] : 'Genel';
+                
+                try {
+                    textToSpeak = await generatePlaceDescription(place.title, category);
+                    // Sadece yapay zeka başarıyla üretirse veritabanına kaydet
+                    await updatePlace(place.id, { ai_description: textToSpeak });
+                    setCurrentAiDescription(textToSpeak);
+                } catch (aiError) {
+                    console.log("Tüm yapay zeka modelleri başarısız oldu, normal açıklamaya dönülüyor.");
+                    textToSpeak = place.description; // Her ihtimale karşı fallback!
+                }
+                
+                setIsGenerating(false);
+            }
+
+            setIsSpeaking(true);
+            Speech.speak(textToSpeak, {
+                language: 'tr-TR',
+                rate: 0.95,
+                pitch: 1.0,
+                onDone: () => setIsSpeaking(false),
+                onStopped: () => setIsSpeaking(false),
+                onError: () => setIsSpeaking(false)
+            });
+
+        } catch (error) {
+            setIsGenerating(false);
+            setIsSpeaking(false);
+            Alert.alert("Hata", "Sesli okuma başlatılamadı.");
+        }
+    };
 
     useEffect(() => {
         if (!place) return;
@@ -94,6 +149,23 @@ const PlaceDetailScreen = ({ route, navigation }) => {
 
                     <Text style={styles.sectionTitle}>Hakkında</Text>
                     <Text style={styles.description}>{place.description}</Text>
+
+                    {(place.categories?.includes('Müzeler') || place.categories?.includes('Tarihi Mekanlar')) && (
+                        <TouchableOpacity 
+                            style={[styles.aiButton, isSpeaking && styles.aiButtonActive]} 
+                            onPress={handleSmartGuide}
+                            disabled={isGenerating}
+                        >
+                            {isGenerating ? (
+                                <MaterialIcons name="hourglass-empty" size={24} color={theme.colors.card} style={styles.aiIcon} />
+                            ) : (
+                                <MaterialIcons name={isSpeaking ? "stop-circle" : "play-circle-fill"} size={24} color={theme.colors.card} style={styles.aiIcon} />
+                            )}
+                            <Text style={styles.aiButtonText}>
+                                {isGenerating ? "Rehber Hazırlanıyor..." : (isSpeaking ? "Dinlemeyi Durdur" : "Akıllı Rehberi Dinle")}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
 
                     {place.coordinate && (
                         <>
@@ -295,7 +367,33 @@ const styles = StyleSheet.create({
         ...theme.typography.body,
         color: theme.colors.textSecondary,
         lineHeight: 24,
+        marginBottom: 16,
+    },
+    aiButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: theme.colors.primary,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: theme.borderRadius.md,
         marginBottom: 24,
+        alignSelf: 'flex-start',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 4,
+    },
+    aiButtonActive: {
+        backgroundColor: theme.colors.error,
+    },
+    aiIcon: {
+        marginRight: 8,
+    },
+    aiButtonText: {
+        ...theme.typography.body,
+        color: theme.colors.card,
+        fontWeight: 'bold',
     },
     actionRow: {
         flexDirection: 'row',

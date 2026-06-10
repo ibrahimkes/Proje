@@ -12,7 +12,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3751142
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Yesemek Gaziantep Mutfağı, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -29,7 +28,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3229596
     },
     categories: [
-      "meze",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Yöresel peynirler, zahter, zeytin böreği ve enfes şarküteri ürünleriyle donatılmış mükemmel bir Antep kahvaltısı için Kahvaltım Şarküteri ideal bir seçimdir.",
@@ -46,7 +45,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3385789
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Çıtır çıtır kadayıfı ve özel peyniriyle Cumba Künefe, tatlı krizlerinize son verecek enfes bir künefe deneyimi sunar.",
@@ -63,7 +62,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3308055
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Çıtır çıtır kadayıfı ve özel peyniriyle Özikizler Künefe İbrahimli, tatlı krizlerinize son verecek enfes bir künefe deneyimi sunar.",
@@ -80,7 +79,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3568939
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "İncecik açılmış yufkası, bol kaliteli Antep fıstığı ve tam kıvamında şerbetiyle Tatlıcı Silo, geleneksel Gaziantep baklavasının en iyi adreslerinden biridir.",
@@ -97,7 +96,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3827936
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını İmam Çağdaş Kebap Ve Baklava Salonu farkıyla deneyimleyin.",
@@ -114,7 +113,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3794831
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Metanet Lokantası | Beyran Kebap, Gaziantep'in meşhur beyran çorbası ve odun ateşinde pişen nefis kebaplarıyla öne çıkan muazzam bir lezzet durağıdır.",
@@ -131,7 +130,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3791082
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Beyrancı Mustafa, Gaziantep'in meşhur beyran çorbası ve odun ateşinde pişen nefis kebaplarıyla öne çıkan muazzam bir lezzet durağıdır.",
@@ -148,7 +147,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3793657
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Dürümcü Recep Usta (Gaziler) farkıyla deneyimleyin.",
@@ -165,7 +164,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3690943
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Dürümcü Recep Usta farkıyla deneyimleyin.",
@@ -183,7 +182,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Dünyanın en büyük mozaik müzelerinden biri olan Zeugma, meşhur 'Çingene Kızı' mozaiği başta olmak üzere, Antik Roma dönemine ait eşsiz sanat eserlerini ve taban mozaiklerini büyüleyici bir atmosferde sergiler.",
     comments: []
@@ -199,7 +198,7 @@ export const MOCK_MARKERS = [
       longitude: 37.37516
     },
     categories: [
-      "meze",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Yöresel peynirler, zahter, zeytin böreği ve enfes şarküteri ürünleriyle donatılmış mükemmel bir Antep kahvaltısı için The Ayıntab Kahvaltı Konağı I Serpme Kahvaltı ideal bir seçimdir.",
@@ -217,7 +216,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Şehrin tam merkezinde yer alan ve ihtişamıyla göz dolduran Gaziantep Kalesi, Roma döneminden günümüze kadar uzanan tarihiyle adeta şehrin simgesidir. İçerisinde panoramik kahramanlık müzesi barındırır.",
     comments: []
@@ -233,7 +232,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3692592
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle kale evi restaurant, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -250,7 +248,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3796876
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Mecidiye Han Mahzen, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -267,7 +264,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3760827
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Taş MEKAN Restaurant, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -284,7 +280,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3841937
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Çulcuoğlu Et Lokantası farkıyla deneyimleyin.",
@@ -301,7 +297,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3808678
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Löküs Ciğer, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -318,7 +313,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3767136
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Ciğerci Yener Usta, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -335,7 +329,6 @@ export const MOCK_MARKERS = [
       longitude: 37.381083
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Ciğerci ali, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -352,7 +345,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3569977
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Pendirhan Atmali Kebap ve Kahvaltı Sarayı farkıyla deneyimleyin.",
@@ -369,7 +362,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3542406
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Havara Restaurant, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -386,7 +378,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3809914
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Eşgili Restoran | Yöresel Gaziantep Yemekleri, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -404,7 +395,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "shopping"
+      "Alışveriş"
     ],
     description: "Yüzyıllardır çekiç seslerinin yankılandığı tarihi çarşı, el işi bakır eşyaların, geleneksel zanaatların ve otantik dükkanların sıralandığı, Gaziantep'in çarşı kültürünü en iyi yansıtan canlı bir noktadır.",
     comments: []
@@ -420,7 +411,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3808264
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Kasap Selçuk Usta, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -437,7 +427,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3804612
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep'in geleneksel sabah tatlısı olan bol fıstıklı, incecik ve kaymaklı katmeri Katmerci Cumaali Usta ustalarının ellerinden sıcak sıcak yiyebilirsiniz.",
@@ -454,7 +444,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3806925
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Begüm HAN, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -471,7 +460,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3812794
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Ciğerci Ali Haydar, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -488,7 +476,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3795054
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Çıtır çıtır kadayıfı ve özel peyniriyle Gazisehir Künefe Katmer Baklava Dondurma, tatlı krizlerinize son verecek enfes bir künefe deneyimi sunar.",
@@ -506,7 +494,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Osmanlı döneminden kalan geleneksel iki katlı avlulu yapısıyla bilinen Gümrük Hanı, günümüzde 'Yaşayan Müze' olarak hizmet vermektedir. İçerisinde kutnu kumaşı ve gümüş işlemeciliği gibi kaybolmaya yüz tutmuş yöresel zanaatlar icra edilir.",
     comments: []
@@ -522,7 +510,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3793934
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Pirpirim yemek, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -539,7 +526,7 @@ export const MOCK_MARKERS = [
       longitude: 37.379042
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Kör Kenan Lahmacun Kebap farkıyla deneyimleyin.",
@@ -556,7 +543,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3775449
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Çıtır çıtır kadayıfı ve özel peyniriyle Katmerci Emre | Katmer - Künefe - Tatlı, tatlı krizlerinize son verecek enfes bir künefe deneyimi sunar.",
@@ -573,7 +560,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3771968
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep'in meşhur ciğer kültürüyle öne çıkan Ciğerci Apo Dayı Millet Bahçesi, taze ve bol baharatlı ciğer şişleriyle misafirlerini ağırlar.",
@@ -590,7 +577,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3779816
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Et-se Et Şükr-Et Millet Bahçesi | Kasap Şükrü Usta farkıyla deneyimleyin.",
@@ -607,7 +594,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3777106
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Koçak Kebap & Beyran, Gaziantep'in meşhur beyran çorbası ve odun ateşinde pişen nefis kebaplarıyla öne çıkan muazzam bir lezzet durağıdır.",
@@ -624,7 +611,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3775118
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını MENA SOKAK LEZZETLERİ farkıyla deneyimleyin.",
@@ -641,7 +628,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3768929
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını CARTLAK KEBABI MİLLET BAHÇESİ farkıyla deneyimleyin.",
@@ -659,7 +646,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "shopping"
+      "Alışveriş"
     ],
     description: "18. yüzyılda yaptırılan ve halk arasında 'Kara Basamak Bedesteni' olarak da bilinen tarihi kapalı çarşı. İçerisinde baharatçılar, yöresel el sanatları ürünleri ve hediyelik eşya dükkanları yer almaktadır.",
     comments: []
@@ -676,7 +663,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Taş döşemeli dar sokakları ve cumbalı geleneksel kesme taştan yapılma Antep evleriyle şehrin eski sivil mimarisini günümüze taşıyan, fotoğraf tutkunları için açık hava müzesi niteliğindeki tarihi mahalle.",
     comments: []
@@ -692,7 +679,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3768929
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Katmerci çeto farkıyla deneyimleyin.",
@@ -709,7 +696,6 @@ export const MOCK_MARKERS = [
       longitude: 37.376328
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle MSM Mutfağın Sokak Modu, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -726,7 +712,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3767144
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Gaziantep mutfağının eşsiz et yemeklerini ve zırh kıymasıyla hazırlanan geleneksel kebaplarını Kavurmacı Kara farkıyla deneyimleyin.",
@@ -743,7 +729,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3800319
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Tarihi Kale Altı içli köftecisi Chef Dilek, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -760,7 +745,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3829922
     },
     categories: [
-      "meze",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Yöresel peynirler, zahter, zeytin böreği ve enfes şarküteri ürünleriyle donatılmış mükemmel bir Antep kahvaltısı için The Ayıntab Kahvaltı Konağı I Serpme Kahvaltı ideal bir seçimdir.",
@@ -777,7 +762,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3892281
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle SERKAN USTA CORBACI, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -794,7 +778,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3918714
     },
     categories: [
-      "kebap",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "BEYRANCI EJDER USTA, Gaziantep'in meşhur beyran çorbası ve odun ateşinde pişen nefis kebaplarıyla öne çıkan muazzam bir lezzet durağıdır.",
@@ -812,7 +796,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Osmanlı hamam mimarisinin en güzel örneklerinden biri olan Lala Mustafa Paşa Külliyesi'nin hamam bölümünde kurulu müze. Balmumu heykellerle eski hamam geleneklerini ve kültürünü canlandırır.",
     comments: []
@@ -828,7 +812,6 @@ export const MOCK_MARKERS = [
       longitude: 37.3937777
     },
     categories: [
-      "all",
       "all"
     ],
     description: "Tarihi dokusu ve eşsiz yöresel menüsüyle Meşhur Nizip Nohutcusu Bilal & İbrahim usta, Gaziantep'e yolu düşenlerin mutlaka uğraması gereken otantik mekanlardan biridir.",
@@ -845,7 +828,7 @@ export const MOCK_MARKERS = [
       longitude: 37.3351794
     },
     categories: [
-      "baklava",
+      "Yöresel Lezzetler",
       "all"
     ],
     description: "Çıtır çıtır kadayıfı ve özel peyniriyle İDRİS DONDURMA KÜNEFE KADAYIF & HELVA, tatlı krizlerinize son verecek enfes bir künefe deneyimi sunar.",
@@ -863,7 +846,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "shopping"
+      "Alışveriş"
     ],
     description: "Gaziantep'in en eski ticari merkezlerinden biridir. Kurutulmuş patlıcanlar, biberler, has Antep fıstıkları, şifalı otlar ve yöresel doğal ürünlerin sergilendiği, renkli ve otantik bir pazar yeridir.",
     comments: []
@@ -880,7 +863,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "1909 yılında tütün tüccarı Bayaz Ahmed Efendi tarafından yaptırılan muhteşem taş han. Günümüzde Gaziantep'in kültürünü, tarihini, el sanatlarını ve günlük yaşamını sergileyen bir kent müzesidir.",
     comments: []
@@ -897,7 +880,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Gaziantep kalesinin hemen güneyinde yer alan, Türkiye'nin ilk mutfak müzesidir. Restoran değildir; eski mutfak araç gereçlerini, sofra geleneklerini ve erzak depolama kültürünü sergileyen tarihi bir konaktır.",
     comments: []
@@ -914,7 +897,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Boyacı Camii külliyesinde bulunan, asırlık geçmişe sahip Gaziantep Mevlevihanesi. İçerisinde el yazması Kur'an-ı Kerimler, hat sanatı eserleri, kilimler ve dervişlerin yaşam alanlarını gösteren mankenler bulunur.",
     comments: []
@@ -931,7 +914,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Evliya Çelebi'nin Seyahatname'sinde övgüyle bahsettiği, Kale altı lokasyonunda bulunan 1640 yapımı asırlık Osmanlı hamamı. Gaziantep'in taş işçiliği mimarisini yansıtan en önemli yapılardandır.",
     comments: []
@@ -948,7 +931,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Gaziantep Kalesi'ne yakın eski bir Antep evinde kurulmuş, Türkiye'nin ilk özel cam eserler müzesidir. Roma ve Bizans dönemine ait antik cam parfümleri, kadehler, boncuklar ve toprak kaplar sergilenmektedir.",
     comments: []
@@ -965,7 +948,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Gaziantep'e özgü benzersiz yeraltı su sistemleri olan 'Kastel' mimarisinin en eski ve günümüze ulaşmış en iyi örneğidir. Yerin metrelerce altında, su kenarında ibadet ve serinleme alanı sunan büyüleyici bir yapıdır.",
     comments: []
@@ -982,7 +965,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "1892 yılında gotik tarzda bir kilise (Meryem Ana Kilisesi) olarak inşa edilen, daha sonra cezaevi ve son olarak camiye dönüştürülen devasa taş yapı. Şehrin en görkemli mimari anıtlarından biridir.",
     comments: []
@@ -999,7 +982,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Türkiye'nin ilk Turizm Bakanı Ali İhsan Göğüş'ün doğduğu tarihi konaktır. İçerisinde bakanın şahsi arşiviyle birlikte Gaziantep'in tarihi, sosyal ve kültürel geçmişine ışık tutan binlerce döküman ve kitap barındırır.",
     comments: []
@@ -1016,7 +999,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "19. yüzyılın sonlarında Katolik Fransız misyonerler tarafından inşa edilen siyah kesme taş mimarili kilise. Günümüzde çok amaçlı bir kültür merkezi ve Gaziantep savunmasını anlatan bir projeksiyon salonu olarak kullanılır.",
     comments: []
@@ -1033,7 +1016,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Bey Mahallesi'ndeki tarihi bir konakta yer alan müze, 1700-1970 yıllarına ait dünya genelinden toplanmış binlerce antika oyuncağı dönemsel odalarda sergiler. Müzenin altında bir de mağara galerisi bulunur.",
     comments: []
@@ -1050,7 +1033,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Gaziantep Üniversitesi kampüsü yakınlarında bulunan müze, Müslüman bilim insanlarının astronomi, coğrafya, tıp ve mühendislik alanlarında insanlığa kazandırdığı icatların replikalarını ve interaktif modellerini sergiler.",
     comments: []
@@ -1067,7 +1050,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "1860'lı yıllarda inşa edilen tek avlulu, revaklı klasik Osmanlı han mimarisi örneğidir. Günümüzde otantik gümüşçüler, sedef kakma atölyeleri ve yöresel el sanatları ürünleri satan dükkanlara ev sahipliği yapar.",
     comments: []
@@ -1084,7 +1067,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Şehrin altını ağ gibi ören 'Livas' adı verilen yeraltı su kanallarının gün yüzüne çıktığı bir diğer görkemli kastel. Merdivenlerle inilen bu mistik yeraltı yapısı, suyun dinlendirici atmosferini korumaktadır.",
     comments: []
@@ -1101,7 +1084,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "1300'lü yıllarda Memlükler döneminde yapıldığı tahmin edilen, şehrin en eski ibadethanelerinden biri. Dünyada eşine az rastlanan, duvara gömülü raylı ahşap minberi (gündüz dışarı çıkarılan, gece kapatılan mekanizma) ile ünlüdür.",
     comments: []
@@ -1118,7 +1101,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "historical"
+      "Tarihi Mekanlar"
     ],
     description: "Şeyh Fethullah Külliyesi'nin bir parçası olan, Klasik Osmanlı hamam mimarisine sahip asırlık taş yapı. Şehrin güneydoğu tarihi aksında yer alan önemli sivil mimari örneklerindendir.",
     comments: []
@@ -1135,7 +1118,7 @@ export const MOCK_MARKERS = [
     },
     categories: [
       "all",
-      "museum"
+      "Müzeler"
     ],
     description: "Alt Paleotik dönemden Osmanlı dönemine kadar bölgede yapılan kazılardan çıkan eserleri kronolojik olarak sergileyen müze. Nesli tükenmiş antik fillerin iskeletleri ve Dülük Antik Kenti buluntuları dikkat çekicidir.",
     comments: []

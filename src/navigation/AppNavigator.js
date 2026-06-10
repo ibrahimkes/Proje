@@ -14,12 +14,15 @@ import ProfileScreen from '../screens/ProfileScreen';
 import PlaceDetailScreen from '../screens/PlaceDetailScreen';
 import AccountSettingsScreen from '../screens/AccountSettingsScreen';
 import PrivacySettingsScreen from '../screens/PrivacySettingsScreen';
+import AdminPanelScreen from '../screens/AdminPanelScreen';
 import { useAuth } from '../context/authContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
+    const { user } = useAuth();
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -32,6 +35,8 @@ const MainTabs = () => {
                         iconName = 'bookmark';
                     } else if (route.name === 'Profil') {
                         iconName = 'person';
+                    } else if (route.name === 'Admin') {
+                        iconName = 'admin-panel-settings';
                     }
 
                     return <MaterialIcons name={iconName} size={size} color={color} />;
@@ -44,6 +49,9 @@ const MainTabs = () => {
             <Tab.Screen name="Keşfet" component={MapScreen} />
             <Tab.Screen name="Kaydedilenler" component={SavedScreen} />
             <Tab.Screen name="Profil" component={ProfileScreen} />
+            {user?.isAdmin && (
+                <Tab.Screen name="Admin" component={AdminPanelScreen} />
+            )}
         </Tab.Navigator>
     );
 };

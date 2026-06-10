@@ -1,5 +1,6 @@
 import React, { useRef, useState, useMemo, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Linking } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Alert, Linking, ScrollView, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
@@ -7,7 +8,7 @@ import AlertWrapper from '../components/AlertWrapper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
 import { ANTEP_CENTER_COORDINATE } from '../constants/mockData';
-import { getPlaces } from '../services/firebaseService';
+import { getPlaces, getNearbyPlaces } from '../services/firebaseService';
 import { useLoading } from '../context/loadingContext';
 import Constants from 'expo-constants';
 
@@ -18,22 +19,49 @@ const MapScreen = ({ route, navigation }) => {
     const [selectedPlace, setSelectedPlace] = useState(null);
     const [userLocation, setUserLocation] = useState(null);
     const [markers, setMarkers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isShowAll, setIsShowAll] = useState(false);
     const [locationPermission, setLocationPermission] = useState(null);
     const [routeDestination, setRouteDestination] = useState(null);
     const { setIsLoading } = useLoading();
     const GOOGLE_MAPS_API_KEY = Constants.expoConfig?.extra?.googleMapsApiKey;
 
-    useEffect(() => {
-        if (locationPermission === 'granted') {
-            const loadPlaces = async () => {
-                setIsLoading(true);
+    const CATEGORIES = [
+        { id: 'all', label: 'Tümü' },
+        { id: 'Tarihi Mekanlar', label: 'Tarihi Mekanlar' },
+        { id: 'Yöresel Lezzetler', label: 'Yöresel Lezzetler' },
+        { id: 'Müzeler', label: 'Müzeler' },
+        { id: 'Alışveriş', label: 'Alışveriş' }
+    ];
+
+    const loadPlacesData = useCallback(async () => {
+        if (locationPermission !== 'granted') return;
+        
+        setIsLoading(true);
+        try {
+            if (isShowAll) {
                 const places = await getPlaces();
                 setMarkers(places);
+            } else if (userLocation) {
+                const places = await getNearbyPlaces(userLocation.latitude, userLocation.longitude, 10);
+                setMarkers(places);
+            } else {
+                // If no user location yet, try to wait or default to all? 
+                // We'll just wait, checkAndRequestLocation will update userLocation soon.
                 setIsLoading(false);
-            };
-            loadPlaces();
+                return;
+            }
+        } catch (error) {
+            console.log("Error loading places:", error);
         }
-    }, [locationPermission]);
+        setIsLoading(false);
+    }, [locationPermission, isShowAll, userLocation]);
+
+    useFocusEffect(
+        useCallback(() => {
+            loadPlacesData();
+        }, [loadPlacesData])
+    );
 
     useEffect(() => {
         if (route.params?.focusedPlace) {
@@ -100,11 +128,11 @@ const MapScreen = ({ route, navigation }) => {
         if (!categories) return "place";
         const catString = categories.join(' ').toLowerCase();
 
-        if (catString.includes('kebap') || catString.includes('yemek') || catString.includes('meze') || catString.includes('baklava')) {
+        if (catString.includes('yöresel') || catString.includes('yemek') || catString.includes('lezzet')) {
             return "restaurant";
-        } else if (catString.includes('museum') || catString.includes('historical') || catString.includes('müze') || catString.includes('tarihi') || catString.includes('kale')) {
+        } else if (catString.includes('müze') || catString.includes('tarihi') || catString.includes('kale') || catString.includes('museum') || catString.includes('historical')) {
             return "museum";
-        } else if (catString.includes('shopping') || catString.includes('çarşı') || catString.includes('pazar')) {
+        } else if (catString.includes('alışveriş') || catString.includes('çarşı') || catString.includes('pazar') || catString.includes('shopping')) {
             return "storefront";
         } else if (catString.includes('park') || catString.includes('doğa') || catString.includes('bahçe')) {
             return "park";
@@ -115,9 +143,13 @@ const MapScreen = ({ route, navigation }) => {
         return "place";
     };
 
-    const filteredMarkers = selectedCategory === 'all'
-        ? markers
-        : markers.filter(m => m.categories.map(c => c.toLowerCase()).includes(selectedCategory));
+    const filteredMarkers = useMemo(() => {
+        return markers.filter(m => {
+            const categoryMatch = selectedCategory === 'all' || m.categories?.includes(selectedCategory);
+            const searchMatch = !searchQuery || m.title?.toLowerCase().includes(searchQuery.toLowerCase());
+            return categoryMatch && searchMatch;
+        });
+    }, [markers, selectedCategory, searchQuery]);
 
     if (locationPermission === 'denied') {
         return (
@@ -187,6 +219,47 @@ const MapScreen = ({ route, navigation }) => {
                 )}
             </MapView>
 
+            <View style={styles.topOverlay}>
+                <View style={styles.searchBar}>
+                    <MaterialIcons name="search" size={24} color={theme.colors.textSecondary} />
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Mekan ara..."
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        placeholderTextColor={theme.colors.textSecondary}
+                    />
+                    {searchQuery ? (
+                        <TouchableOpacity onPress={() => setSearchQuery('')}>
+                            <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+                        </TouchableOpacity>
+                    ) : null}
+                </View>
+
+                <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.categoriesContainer}
+                    contentContainerStyle={styles.categoryList}
+                >
+                    {CATEGORIES.map(category => (
+                        <TouchableOpacity
+                            key={category.id}
+                            style={[
+                                styles.categoryPill,
+                                selectedCategory === category.id && styles.categoryPillSelected
+                            ]}
+                            onPress={() => setSelectedCategory(category.id)}
+                        >
+                            <Text style={[
+                                styles.categoryText,
+                                selectedCategory === category.id && styles.categoryTextSelected
+                            ]}>{category.label}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+
             {routeDestination && (
                 <View style={styles.cancelRouteContainer}>
                     <TouchableOpacity style={styles.cancelRouteButton} onPress={() => setRouteDestination(null)}>
@@ -195,6 +268,15 @@ const MapScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </View>
             )}
+
+            <View style={styles.bottomLeftContainer}>
+                <TouchableOpacity style={[styles.showAllBtn, isShowAll && styles.showAllBtnActive]} onPress={() => setIsShowAll(!isShowAll)}>
+                    <MaterialIcons name={isShowAll ? "filter-center-focus" : "public"} size={20} color={isShowAll ? theme.colors.card : theme.colors.primary} />
+                    <Text style={[styles.showAllText, isShowAll && styles.showAllTextActive]}>
+                        {isShowAll ? "Yakındakiler" : "Tüm Mekanlar"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
 
             <View style={styles.fabContainer}>
                 <TouchableOpacity style={styles.fab} onPress={() => {
@@ -327,7 +409,6 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     searchBar: {
-        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: theme.colors.card,
@@ -339,7 +420,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-        marginRight: 10,
+        marginBottom: 12,
     },
     searchInput: {
         flex: 1,
@@ -424,6 +505,37 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+    },
+    bottomLeftContainer: {
+        position: 'absolute',
+        left: 16,
+        bottom: 30,
+    },
+    showAllBtn: {
+        flexDirection: 'row',
+        backgroundColor: theme.colors.card,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        borderRadius: theme.borderRadius.round,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+        borderWidth: 1,
+        borderColor: theme.colors.primary,
+    },
+    showAllBtnActive: {
+        backgroundColor: theme.colors.primary,
+    },
+    showAllText: {
+        color: theme.colors.primary,
+        fontWeight: 'bold',
+        marginLeft: 8,
+    },
+    showAllTextActive: {
+        color: theme.colors.card,
     },
 
     sheetContent: {

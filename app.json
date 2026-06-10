@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Yöresel Mekanlar",
-    "slug": "Yöresel Mekanlar",
+    "slug": "YoreselLezzetler",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/yore-kesfet-icon.png",

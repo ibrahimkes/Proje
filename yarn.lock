@@ -940,18 +940,9 @@
   resolved "https://registry.npmjs.org/@expo/dom-webview/-/dom-webview-55.0.3.tgz"
   integrity sha512-bY4/rfcZ0f43DvOtMn8/kmPlmo01tex5hRoc5hKbwBwQjqWQuQt0ACwu7akR9IHI4j0WNG48eL6cZB6dZUFrzg==
 
-"@expo/env@^2.0.11", "@expo/env@~2.1.1":
-  version "2.1.1"
-  resolved "https://registry.npmjs.org/@expo/env/-/env-2.1.1.tgz"
-  integrity sha512-rVvHC4I6xlPcg+mAO09ydUi2Wjv1ZytpLmHOSzvXzBAz9mMrJggqCe4s4dubjJvi/Ino/xQCLhbaLCnTtLpikg==
-  dependencies:
-    chalk "^4.0.0"
-    debug "^4.3.4"
-    getenv "^2.0.0"
-
-"@expo/env@~2.1.2":
+"@expo/env@^2.0.11", "@expo/env@~2.1.1", "@expo/env@~2.1.2":
   version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@expo/env/-/env-2.1.2.tgz#c25ecadc60555873761a02c4b85bdd1663fa568c"
+  resolved "https://registry.npmjs.org/@expo/env/-/env-2.1.2.tgz"
   integrity sha512-RJtGFfj/ygO/6zcVbV3cckHf4THcEkv5IZft1GjCB3dfT6axvzvIwXE9EiQqQYmGHcQ+ZrvC8xZcIhiHba0pYg==
   dependencies:
     chalk "^4.0.0"
@@ -1118,14 +1109,9 @@
   dependencies:
     debug "^4.3.4"
 
-"@expo/schema-utils@^55.0.2":
-  version "55.0.2"
-  resolved "https://registry.npmjs.org/@expo/schema-utils/-/schema-utils-55.0.2.tgz"
-  integrity sha512-QZ5WKbJOWkCrMq0/kfhV9ry8te/OaS34YgLVpG8u9y2gix96TlpRTbxM/YATjNcUR2s4fiQmPCOxkGtog4i37g==
-
-"@expo/schema-utils@^55.0.4":
+"@expo/schema-utils@^55.0.2", "@expo/schema-utils@^55.0.4":
   version "55.0.4"
-  resolved "https://registry.yarnpkg.com/@expo/schema-utils/-/schema-utils-55.0.4.tgz#2039daa04933da8f27957fd61b2b6d8d22d34bba"
+  resolved "https://registry.npmjs.org/@expo/schema-utils/-/schema-utils-55.0.4.tgz"
   integrity sha512-65IdeeE8dAZR3n3J5Eq7LYiQ8BFGeEYCWPBCzycvafL7PkskbCyIclTQarRwf/HXFoRvezKCjaLwy/8v9Prk6g==
 
 "@expo/sdk-runtime-versions@^1.0.0":
@@ -1554,6 +1540,11 @@
   version "1.0.5"
   resolved "https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz"
   integrity sha512-+uGNN7rkfn41HLO0vekTFhTxk61eKa8mTpRGLO0QSqlQdKvIoGAvLp3ppdVIWbTGYJWM6Kp0iN+PjMIOcnVqTw==
+
+"@google/generative-ai@^0.24.1":
+  version "0.24.1"
+  resolved "https://registry.npmjs.org/@google/generative-ai/-/generative-ai-0.24.1.tgz"
+  integrity sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==
 
 "@gorhom/bottom-sheet@^5.2.8":
   version "5.2.8"
@@ -2706,7 +2697,7 @@ dnssd-advertise@^1.1.3:
 
 dotenv@^17.4.2:
   version "17.4.2"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-17.4.2.tgz#c07e54a746e11eba021dd9e1047ced5afdc1c034"
+  resolved "https://registry.npmjs.org/dotenv/-/dotenv-17.4.2.tgz"
   integrity sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==
 
 ee-first@1.1.1:
@@ -2789,24 +2780,16 @@ expo-asset@~55.0.8:
     "@expo/image-utils" "^0.8.12"
     expo-constants "~55.0.7"
 
-expo-constants@^55.0.16:
+expo-constants@^55.0.16, expo-constants@~55.0.7:
   version "55.0.16"
-  resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-55.0.16.tgz#b2ffdc354716488aa38684c8cbf097150089b9b7"
+  resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-55.0.16.tgz"
   integrity sha512-Z15/No94UHoogD+pulxjudGAeOHTEIWZgb/vnX48Wx5D+apWTeCbnKxQZZtGQlosvduYL5kaic2/W8U+NHfBQQ==
   dependencies:
     "@expo/env" "~2.1.2"
 
-expo-constants@~55.0.7:
-  version "55.0.7"
-  resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-55.0.7.tgz"
-  integrity sha512-kdcO4TsQRRqt0USvjaY5vgQMO9H52K3kBZ/ejC7F6rz70mv08GoowrZ1CYOr5O4JpPDRlIpQfZJUucaS/c+KWQ==
-  dependencies:
-    "@expo/config" "~55.0.8"
-    "@expo/env" "~2.1.1"
-
 expo-dev-client@~55.0.35:
   version "55.0.35"
-  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-55.0.35.tgz#93bc40edcc6724e633396c53fec53b77423e205f"
+  resolved "https://registry.npmjs.org/expo-dev-client/-/expo-dev-client-55.0.35.tgz"
   integrity sha512-DN50x9gqWYAfnJpxgiJm3zK2bFvDhxJ5JjFq0wFot7o4knZ7H3BVwiL6zZMHG29g6gfxdgpzGG69WPiSR/Ipgg==
   dependencies:
     expo-dev-launcher "55.0.36"
@@ -2817,7 +2800,7 @@ expo-dev-client@~55.0.35:
 
 expo-dev-launcher@55.0.36:
   version "55.0.36"
-  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-55.0.36.tgz#9e2f008aa4ba06798e8340642aafaac87b78dbf5"
+  resolved "https://registry.npmjs.org/expo-dev-launcher/-/expo-dev-launcher-55.0.36.tgz"
   integrity sha512-Dn2om4J71aavWqi1jLzK3QlGZjDiFv7nIBZkQyzy2zW62IOD9kLwOOvHHj07Ra/6n9cqFEpNYzwpPkR7KHuYZA==
   dependencies:
     "@expo/schema-utils" "^55.0.4"
@@ -2826,12 +2809,12 @@ expo-dev-launcher@55.0.36:
 
 expo-dev-menu-interface@55.0.2:
   version "55.0.2"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu-interface/-/expo-dev-menu-interface-55.0.2.tgz#aead1b9980c904d61c59e9182e13b2b37bcb2161"
+  resolved "https://registry.npmjs.org/expo-dev-menu-interface/-/expo-dev-menu-interface-55.0.2.tgz"
   integrity sha512-DomUNvGzY/xliwnMdbAYY780sCv19N7zIbifc0ClcoCzJZpNSCkvJ2qGIFRPyM/7DmqmlHGCKi8di7kYYLKNEg==
 
 expo-dev-menu@55.0.30:
   version "55.0.30"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-55.0.30.tgz#3da5185de7ad31ff63497ebc506526c7a4e0eb26"
+  resolved "https://registry.npmjs.org/expo-dev-menu/-/expo-dev-menu-55.0.30.tgz"
   integrity sha512-uwDI4cEPzpRemf06Ts5O41azJcz8BBcE6QOkNaTX8JlzdJ05eq9jWxmbA1WhoSoE5C+NFo8njHSvmHqUqTpOng==
   dependencies:
     expo-dev-menu-interface "55.0.2"
@@ -2850,7 +2833,7 @@ expo-font@~55.0.4:
 
 expo-json-utils@~55.0.2:
   version "55.0.2"
-  resolved "https://registry.yarnpkg.com/expo-json-utils/-/expo-json-utils-55.0.2.tgz#ef79888b881ef5b92d27245d3a758bc5debcbccf"
+  resolved "https://registry.npmjs.org/expo-json-utils/-/expo-json-utils-55.0.2.tgz"
   integrity sha512-QJMOZOPOG7CTnKcrdVaiummn2va1MCO56z++eyWkDv3GBRODldM6MFMDf/jTREWthFc2Nxo6TuyWRrEV9S6n/Q==
 
 expo-keep-awake@~55.0.4:
@@ -2867,7 +2850,7 @@ expo-location@~55.1.2:
 
 expo-manifests@~55.0.17:
   version "55.0.17"
-  resolved "https://registry.yarnpkg.com/expo-manifests/-/expo-manifests-55.0.17.tgz#6f709f8732341a751db6959a824ea995009bec46"
+  resolved "https://registry.npmjs.org/expo-manifests/-/expo-manifests-55.0.17.tgz"
   integrity sha512-vKZvFivX3usVJKfBODKQcFHso0g38zlGbRGqGAppz+il0zKvG6umpJ47OZbzLod7iJpjd+ZDD2AGuOxacixonA==
   dependencies:
     expo-json-utils "~55.0.2"
@@ -2894,6 +2877,11 @@ expo-server@^55.0.6:
   resolved "https://registry.npmjs.org/expo-server/-/expo-server-55.0.6.tgz"
   integrity sha512-xI72FTm469FfuuBL2R5aNtthgH+GR7ygOpsx/KcPS0K8AZaZd7VjtEExbzn9/qyyYkWW3T+3dAmCDKOMX8gdmQ==
 
+expo-speech@~55.0.14:
+  version "55.0.14"
+  resolved "https://registry.npmjs.org/expo-speech/-/expo-speech-55.0.14.tgz"
+  integrity sha512-135FKZt1KZ9uCZdKjXQBbXyU5RHssYv+4Xxxy1wkENBHvgmnNTMOKRj+drXPmkCqsJWIVNTY6PmksUwjw2PcSQ==
+
 expo-status-bar@~55.0.4:
   version "55.0.4"
   resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-55.0.4.tgz"
@@ -2903,7 +2891,7 @@ expo-status-bar@~55.0.4:
 
 expo-updates-interface@~55.1.6:
   version "55.1.6"
-  resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-55.1.6.tgz#18a806d65a28229ed4a7f920fceb9dda678c5c09"
+  resolved "https://registry.npmjs.org/expo-updates-interface/-/expo-updates-interface-55.1.6.tgz"
   integrity sha512-evxNpagCkjT3lE6bGV570TFzRtKuIuLY8I37RYHoriXCJ+ZKCN1hbmklK29uAixya+BxGpeTI2K4FqYeJLvfrw==
 
 expo@~55.0.6:
@@ -3546,7 +3534,7 @@ lodash.debounce@^4.0.8:
 
 lodash.isequal@^4.5.0:
   version "4.5.0"
-  resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+  resolved "https://registry.npmjs.org/lodash.isequal/-/lodash.isequal-4.5.0.tgz"
   integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
 lodash.throttle@^4.1.1:
@@ -4252,7 +4240,7 @@ react-native-keyboard-aware-scroll-view@^0.9.5:
 
 react-native-maps-directions@^1.9.0:
   version "1.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-maps-directions/-/react-native-maps-directions-1.9.0.tgz#63ae8e8b36499042a658e43cd4836ac89aab8b7d"
+  resolved "https://registry.npmjs.org/react-native-maps-directions/-/react-native-maps-directions-1.9.0.tgz"
   integrity sha512-68SrMOUg4WQ5PmpS9sNOTZaYtdyVYJnnjQOOhABrgiKnb5BXCZRU2gDoS11gYf23hjUBjq8JXzgfn37WcINLwA==
   dependencies:
     lodash.isequal "^4.5.0"
