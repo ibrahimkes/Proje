@@ -99,7 +99,7 @@ const SavedScreen = ({ navigation }) => {
                         <Image source={{ uri: item.image }} style={styles.savedImage} />
                         <View style={styles.savedInfo}>
                             <Text style={styles.savedTitle}>{item.title}</Text>
-                            <Text style={styles.savedType}>{item.categories ? item.categories[0] : 'Mekan'}</Text>
+                            <Text style={styles.savedType}>{item.subtitle}</Text>
                             <View style={styles.savedRating}>
                                 <MaterialIcons name="star" size={16} color="#FFD700" />
                                 <Text style={styles.savedRatingText}>{item.rating}</Text>

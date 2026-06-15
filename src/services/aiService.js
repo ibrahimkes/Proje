@@ -16,6 +16,7 @@ export const generatePlaceDescription = async (placeTitle, placeCategory) => {
 
     const prompt = `
 Sen profesyonel, entelektüel ve bilgili bir turist rehberisin.
+Şehir: Gaziantep
 Mekan Adı: "${placeTitle}"
 Kategori: "${placeCategory || 'Genel'}"
 
@@ -29,6 +30,7 @@ Lütfen şu detaylara mutlaka yer ver:
 
 Lütfen markdown kullanma (kalın, eğik yazı vb. işaretler olmasın), sadece düz metin ver ki sesli okumada noktalama işaretleri düzgün okunsun. Yıldız (*) veya diyez (#) gibi karakterler kesinlikle kullanma.
 Girişte klasik "Merhaba, hoş geldiniz" kalıplarını çok kısa tutup direkt etkileyici hikayeye giriş yap.
+Önemli Not: Mekanın mutlaka Gaziantep'te olduğunu göz önünde bulundurarak anlatımı yap.
 `;
 
     for (const modelName of modelsToTry) {

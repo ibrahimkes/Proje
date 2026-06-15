@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert } from 'react-native';
+import { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Keyboard, Alert, ActivityIndicator } from 'react-native';
 import AlertWrapper from '../components/AlertWrapper';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -20,31 +20,90 @@ const PlaceDetailScreen = ({ route, navigation }) => {
     const [isFav, setIsFav] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     const [currentAiDescription, setCurrentAiDescription] = useState(place?.ai_description || null);
     const { setIsLoading } = useLoading();
 
     const { user } = useAuth();
 
+    const chunksRef = useRef([]);
+    const currentChunkIndexRef = useRef(0);
+    const isPlayingRef = useRef(false);
+
     useEffect(() => {
         return () => {
+            isPlayingRef.current = false;
             Speech.stop();
         };
     }, []);
 
-    const handleSmartGuide = async () => {
-        if (isSpeaking) {
-            Speech.stop();
+    const playNextChunk = () => {
+        if (!isPlayingRef.current || currentChunkIndexRef.current >= chunksRef.current.length) {
             setIsSpeaking(false);
+            setIsPaused(false);
+            isPlayingRef.current = false;
             return;
         }
 
+        const chunk = chunksRef.current[currentChunkIndexRef.current];
+        Speech.speak(chunk, {
+            language: 'tr-TR',
+            rate: 0.95,
+            pitch: 1.0,
+            onDone: () => {
+                if (isPlayingRef.current) {
+                    currentChunkIndexRef.current += 1;
+                    playNextChunk();
+                }
+            },
+            onStopped: () => { },
+            onError: () => {
+                setIsSpeaking(false);
+                setIsPaused(false);
+                isPlayingRef.current = false;
+            }
+        });
+    };
+
+    const handlePauseResume = async () => {
+        if (Platform.OS === 'ios') {
+            if (isPaused) {
+                await Speech.resume();
+                setIsPaused(false);
+            } else {
+                await Speech.pause();
+                setIsPaused(true);
+            }
+        } else {
+            // Android için sahte (pseudo) duraklatma: Bulunduğu cümlede durdurur, devam edince o cümleyi baştan okur.
+            if (isPaused) {
+                setIsPaused(false);
+                isPlayingRef.current = true;
+                playNextChunk();
+            } else {
+                setIsPaused(true);
+                isPlayingRef.current = false;
+                await Speech.stop();
+            }
+        }
+    };
+
+    const handleStopGuide = async () => {
+        isPlayingRef.current = false;
+        await Speech.stop();
+        setIsSpeaking(false);
+        setIsPaused(false);
+        currentChunkIndexRef.current = 0;
+    };
+
+    const handleSmartGuide = async () => {
         try {
             let textToSpeak = currentAiDescription;
 
             if (!textToSpeak) {
                 setIsGenerating(true);
                 const category = place.categories && place.categories.length > 0 ? place.categories[0] : 'Genel';
-                
+
                 try {
                     textToSpeak = await generatePlaceDescription(place.title, category);
                     // Sadece yapay zeka başarıyla üretirse veritabanına kaydet
@@ -54,23 +113,52 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                     console.log("Tüm yapay zeka modelleri başarısız oldu, normal açıklamaya dönülüyor.");
                     textToSpeak = place.description; // Her ihtimale karşı fallback!
                 }
-                
+
                 setIsGenerating(false);
             }
 
             setIsSpeaking(true);
-            Speech.speak(textToSpeak, {
-                language: 'tr-TR',
-                rate: 0.95,
-                pitch: 1.0,
-                onDone: () => setIsSpeaking(false),
-                onStopped: () => setIsSpeaking(false),
-                onError: () => setIsSpeaking(false)
-            });
+            setIsPaused(false);
+
+            // Metni 3500 karakterlik parçalara böl (ExpoSpeech limiti 4000 karakterdir)
+            const chunks = [];
+            let currentChunk = '';
+            const sentences = textToSpeak.replace(/([.!?])\s*/g, "$1|").split("|");
+
+            for (let sentence of sentences) {
+                if (!sentence.trim()) continue;
+
+                if (sentence.length > 3500) {
+                    if (currentChunk.trim()) {
+                        chunks.push(currentChunk.trim());
+                        currentChunk = '';
+                    }
+                    for (let i = 0; i < sentence.length; i += 3500) {
+                        chunks.push(sentence.substring(i, i + 3500));
+                    }
+                } else if ((currentChunk + sentence).length > 3500) {
+                    chunks.push(currentChunk.trim());
+                    currentChunk = sentence + " ";
+                } else {
+                    currentChunk += sentence + " ";
+                }
+            }
+            if (currentChunk.trim()) {
+                chunks.push(currentChunk.trim());
+            }
+
+            chunksRef.current = chunks;
+            currentChunkIndexRef.current = 0;
+            isPlayingRef.current = true;
+            setIsSpeaking(true);
+            setIsPaused(false);
+
+            playNextChunk();
 
         } catch (error) {
             setIsGenerating(false);
             setIsSpeaking(false);
+            setIsPaused(false);
             Alert.alert("Hata", "Sesli okuma başlatılamadı.");
         }
     };
@@ -151,20 +239,39 @@ const PlaceDetailScreen = ({ route, navigation }) => {
                     <Text style={styles.description}>{place.description}</Text>
 
                     {(place.categories?.includes('Müzeler') || place.categories?.includes('Tarihi Mekanlar')) && (
-                        <TouchableOpacity 
-                            style={[styles.aiButton, isSpeaking && styles.aiButtonActive]} 
-                            onPress={handleSmartGuide}
-                            disabled={isGenerating}
-                        >
-                            {isGenerating ? (
-                                <MaterialIcons name="hourglass-empty" size={24} color={theme.colors.card} style={styles.aiIcon} />
+                        <View style={styles.aiContainer}>
+                            {!isSpeaking && !isGenerating && !isPaused ? (
+                                <TouchableOpacity
+                                    style={styles.aiButton}
+                                    onPress={handleSmartGuide}
+                                >
+                                    <MaterialIcons name="play-circle-fill" size={24} color={theme.colors.card} style={styles.aiIcon} />
+                                    <Text style={styles.aiButtonText}>Akıllı Rehberi Dinle</Text>
+                                </TouchableOpacity>
+                            ) : isGenerating ? (
+                                <View style={[styles.aiButton, styles.aiButtonGenerating]}>
+                                    <ActivityIndicator size="small" color={theme.colors.card} style={styles.aiIcon} />
+                                    <Text style={styles.aiButtonText}>Rehber Hazırlanıyor...</Text>
+                                </View>
                             ) : (
-                                <MaterialIcons name={isSpeaking ? "stop-circle" : "play-circle-fill"} size={24} color={theme.colors.card} style={styles.aiIcon} />
+                                <View style={styles.aiControlsContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.aiButton, styles.aiButtonActive, { marginRight: 8 }]}
+                                        onPress={handlePauseResume}
+                                    >
+                                        <MaterialIcons name={isPaused ? "play-circle-fill" : "pause-circle-filled"} size={24} color={theme.colors.card} style={styles.aiIcon} />
+                                        <Text style={styles.aiButtonText}>{isPaused ? "Devam Ettir" : "Duraklat"}</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={[styles.aiButton, styles.aiButtonStop]}
+                                        onPress={handleStopGuide}
+                                    >
+                                        <MaterialIcons name="cancel" size={24} color={theme.colors.error} />
+                                    </TouchableOpacity>
+                                </View>
                             )}
-                            <Text style={styles.aiButtonText}>
-                                {isGenerating ? "Rehber Hazırlanıyor..." : (isSpeaking ? "Dinlemeyi Durdur" : "Akıllı Rehberi Dinle")}
-                            </Text>
-                        </TouchableOpacity>
+                        </View>
                     )}
 
                     {place.coordinate && (
@@ -369,23 +476,37 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         marginBottom: 16,
     },
+    aiContainer: {
+        marginBottom: 24,
+    },
     aiButton: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: theme.colors.primary,
         paddingVertical: 12,
         paddingHorizontal: 16,
         borderRadius: theme.borderRadius.md,
-        marginBottom: 24,
-        alignSelf: 'flex-start',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
         elevation: 4,
+        alignSelf: 'flex-start',
+    },
+    aiButtonGenerating: {
+        opacity: 0.8,
     },
     aiButtonActive: {
+        backgroundColor: '#FF9800',
+    },
+    aiButtonStop: {
         backgroundColor: theme.colors.error,
+        paddingHorizontal: 16,
+    },
+    aiControlsContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     aiIcon: {
         marginRight: 8,
