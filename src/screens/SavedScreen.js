@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { db } from '../../firebaseConfig';
+import { collection, getDocs, updateDoc, doc, deleteField } from 'firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '../constants/theme';
@@ -16,6 +18,28 @@ const SavedScreen = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             let isActive = true;
+
+            // GEÇİCİ TEMİZLİK KODU (Yapay zeka metinlerini sıfırlar)
+            /* const cleanupAiDesc = async () => {
+                try {
+                    console.log("Yapay zeka metinleri temizleniyor...");
+                    const snap = await getDocs(collection(db, 'places'));
+                    let count = 0;
+                    for (const placeDoc of snap.docs) {
+                        if (placeDoc.data().ai_description) {
+                            await updateDoc(doc(db, 'places', placeDoc.id), {
+                                ai_description: deleteField()
+                            });
+                            count++;
+                        }
+                    }
+                    console.log(`Temizlik tamamlandı! ${count} adet mekanın yapay zeka metni silindi.`);
+                } catch(e) {
+                    console.log("Cleanup error", e);
+                }
+            };
+            cleanupAiDesc(); */
+
             const fetchData = async () => {
                 if (user) {
                     setIsLoading(true);
